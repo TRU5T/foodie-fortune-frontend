@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { ShoppingCart, User, Menu } from "lucide-react";
+import { ShoppingCart, User, Menu, Stamp, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -16,8 +16,15 @@ export const Navbar = () => {
       <Link to="/rewards" className="font-medium hover:text-primary transition-colors">
         Rewards
       </Link>
+      <Link to="/stamps" className="font-medium hover:text-primary transition-colors">
+        Stamp Cards
+      </Link>
       <Link to="/restaurants" className="font-medium hover:text-primary transition-colors">
         Restaurants
+      </Link>
+      <Link to="/business" className="font-medium hover:text-primary transition-colors flex items-center gap-1">
+        <Store className="h-4 w-4" />
+        For Business
       </Link>
     </>
   );

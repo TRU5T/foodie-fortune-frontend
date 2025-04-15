@@ -32,6 +32,7 @@ const Restaurants = () => {
       rating: 4.5,
       deliveryTime: "15-25 min",
       pointsPerDollar: 2,
+      stampsAvailable: true,
     },
     {
       id: "2",
@@ -41,6 +42,7 @@ const Restaurants = () => {
       rating: 4.7,
       deliveryTime: "20-30 min",
       pointsPerDollar: 3,
+      stampsAvailable: true,
     },
     {
       id: "3",
@@ -59,6 +61,7 @@ const Restaurants = () => {
       rating: 4.3,
       deliveryTime: "15-25 min",
       pointsPerDollar: 2,
+      stampsAvailable: true,
     },
     {
       id: "5",

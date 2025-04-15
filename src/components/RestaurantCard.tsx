@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Clock, Star } from "lucide-react";
+import { Clock, Star, Award } from "lucide-react";
 
 interface RestaurantCardProps {
   id: string;
@@ -13,6 +13,7 @@ interface RestaurantCardProps {
   rating: number;
   deliveryTime: string;
   pointsPerDollar: number;
+  stampsAvailable?: boolean;
 }
 
 export const RestaurantCard = ({
@@ -23,6 +24,7 @@ export const RestaurantCard = ({
   rating,
   deliveryTime,
   pointsPerDollar,
+  stampsAvailable = false,
 }: RestaurantCardProps) => {
   return (
     <Card className="food-card">
@@ -32,9 +34,17 @@ export const RestaurantCard = ({
           alt={name} 
           className="w-full h-48 object-cover"
         />
-        <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground">
-          {pointsPerDollar}x Points
-        </Badge>
+        <div className="absolute top-2 right-2 flex flex-col gap-2">
+          <Badge className="bg-primary text-primary-foreground">
+            {pointsPerDollar}x Points
+          </Badge>
+          {stampsAvailable && (
+            <Badge className="bg-accent text-accent-foreground flex gap-1 items-center">
+              <Award className="h-3 w-3" />
+              Stamps
+            </Badge>
+          )}
+        </div>
       </div>
       <CardContent className="p-4">
         <h3 className="text-lg font-semibold">{name}</h3>
