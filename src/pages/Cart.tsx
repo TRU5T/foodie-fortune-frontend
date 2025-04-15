@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Minus, Plus, Trash2, AlertCircle } from "lucide-react";
+import { Minus, Plus, Trash2, AlertCircle, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Cart = () => {
