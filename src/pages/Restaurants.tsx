@@ -20,7 +20,7 @@ import { Search, MapPin } from "lucide-react";
 
 const Restaurants = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [cuisineFilter, setCuisineFilter] = useState("");
+  const [cuisineFilter, setCuisineFilter] = useState("all");
   
   // Mock data
   const restaurants = [
@@ -82,7 +82,7 @@ const Restaurants = () => {
   
   const filteredRestaurants = restaurants.filter(restaurant => {
     const matchesSearch = restaurant.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCuisine = cuisineFilter === "" || restaurant.cuisine.toLowerCase().includes(cuisineFilter.toLowerCase());
+    const matchesCuisine = cuisineFilter === "all" || restaurant.cuisine.toLowerCase().includes(cuisineFilter.toLowerCase());
     return matchesSearch && matchesCuisine;
   });
   
@@ -120,7 +120,7 @@ const Restaurants = () => {
                         <SelectValue placeholder="Cuisine" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Cuisines</SelectItem>
+                        <SelectItem value="all">All Cuisines</SelectItem>
                         {cuisines.map((cuisine) => (
                           <SelectItem key={cuisine} value={cuisine.toLowerCase()}>
                             {cuisine}
@@ -171,7 +171,7 @@ const Restaurants = () => {
                 className="mt-4"
                 onClick={() => {
                   setSearchQuery("");
-                  setCuisineFilter("");
+                  setCuisineFilter("all");
                 }}
               >
                 Clear Filters
