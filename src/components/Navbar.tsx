@@ -28,9 +28,9 @@ export const Navbar = () => {
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
             <span className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="font-bold text-white">FF</span>
+              <span className="font-bold text-white">RD</span>
             </span>
-            <span className="font-bold text-xl">FoodieRewards</span>
+            <span className="font-bold text-xl">Redeemr</span>
           </Link>
         </div>
 
