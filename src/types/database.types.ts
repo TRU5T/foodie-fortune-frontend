@@ -46,3 +46,13 @@ export type UserReward = {
   is_redeemed: boolean;
   redeemed_at: string | null;
 };
+
+export type UserRole = 'customer' | 'vendor' | 'admin';
+
+export type UserRoles = {
+  id: string;
+  user_id: string;
+  role: UserRole;
+  created_at: string;
+  updated_at: string;
+};

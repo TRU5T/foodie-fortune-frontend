@@ -4,9 +4,12 @@ import { ShoppingCart, User, Menu, Stamp, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { RoleSwitcher } from "@/components/RoleSwitcher";
+import { useAuth } from "@/context/AuthContext";
 
 export const Navbar = () => {
   const isMobile = useIsMobile();
+  const { user } = useAuth();
 
   const NavLinks = () => (
     <>
@@ -75,6 +78,7 @@ export const Navbar = () => {
 
         {!isMobile && (
           <div className="flex items-center gap-4">
+            {user && <RoleSwitcher />}
             <Link to="/cart">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
