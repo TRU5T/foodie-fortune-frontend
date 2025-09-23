@@ -24,6 +24,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const setup = async () => {
+      // If supabase is not available, skip auth setup
+      if (!supabase) {
+        console.warn('Supabase client not available - skipping auth setup');
+        setIsLoading(false);
+        return;
+      }
+
       const { data } = await supabase.auth.getSession();
       setSession(data.session);
       
@@ -39,8 +46,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       setIsLoading(false);
 
-      // Set up auth state change listener
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      // Set up auth state change listener only if supabase is available
+      if (supabase) {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
           setSession(session);
           
@@ -58,17 +66,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           
           setIsLoading(false);
         }
-      );
+        );
 
-      return () => {
-        subscription.unsubscribe();
-      };
+        return () => {
+          subscription.unsubscribe();
+        };
+      }
     };
 
     setup();
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    if (!supabase) {
+      toast({
+        title: "Error",
+        description: "Supabase is not connected. Please contact support.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       
@@ -92,6 +110,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    if (!supabase) {
+      toast({
+        title: "Error",
+        description: "Supabase is not connected. Please contact support.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error, data } = await supabase.auth.signUp({ 
         email, 
@@ -140,6 +167,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
+    if (!supabase) {
+      toast({
+        title: "Error",
+        description: "Supabase is not connected. Please contact support.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signOut();
       
@@ -163,6 +199,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetPassword = async (email: string) => {
+    if (!supabase) {
+      toast({
+        title: "Error",
+        description: "Supabase is not connected. Please contact support.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
