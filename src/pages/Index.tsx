@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { RestaurantCard } from "@/components/RestaurantCard";
@@ -6,9 +5,33 @@ import { RewardCard } from "@/components/RewardCard";
 import { PointsSummary } from "@/components/PointsSummary";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LandingPage } from "@/components/LandingPage";
+import { useAuth } from "@/context/AuthContext";
 import { ArrowRight, UtensilsCrossed, Trophy, Clock } from "lucide-react";
 
 const Index = () => {
+  const { user, isLoading } = useAuth();
+
+  // Show landing page for non-authenticated users
+  if (!isLoading && !user) {
+    return <LandingPage />;
+  }
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
   // Mock data
   const featuredRestaurants = [
     {
