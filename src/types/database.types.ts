@@ -1,12 +1,15 @@
 
 export type Restaurant = {
   id: string;
+  owner_id: string | null;
   name: string;
   cuisine: string | null;
   description: string | null;
   logo_url: string | null;
   points_per_dollar: number;
   stamps_required: number;
+  created_at: string;
+  updated_at: string;
 };
 
 export type User = {
@@ -36,7 +39,11 @@ export type Reward = {
   name: string;
   description: string | null;
   points_required: number;
+  stamps_required: number;
   image_url: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 };
 
 export type UserReward = {

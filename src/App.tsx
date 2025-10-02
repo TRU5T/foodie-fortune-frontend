@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import BusinessSubscription from "./pages/BusinessSubscription";
 import MyStampCards from "./pages/MyStampCards";
 import Auth from "./pages/Auth";
+import VendorDashboard from "./pages/VendorDashboard";
 
 const queryClient = new QueryClient();
 
@@ -37,7 +38,8 @@ const App = () => (
               <Route path="/cart" element={<Cart />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/business" element={<BusinessSubscription />} />
-              <Route path="/stamps" element={<MyStampCards />} />
+              <Route path="/my-stamp-cards" element={<MyStampCards />} />
+              <Route path="/vendor-dashboard" element={<VendorDashboard />} />
               <Route path="/auth" element={<Auth />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

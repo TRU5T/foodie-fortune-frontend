@@ -16,18 +16,12 @@ export const Navbar = () => {
       <Link to="/" className="font-medium hover:text-primary transition-colors">
         Home
       </Link>
-      <Link to="/rewards" className="font-medium hover:text-primary transition-colors">
-        Rewards
-      </Link>
-      <Link to="/stamps" className="font-medium hover:text-primary transition-colors">
-        Stamp Cards
-      </Link>
       <Link to="/restaurants" className="font-medium hover:text-primary transition-colors">
         Restaurants
       </Link>
-      <Link to="/business" className="font-medium hover:text-primary transition-colors flex items-center gap-1">
-        <Store className="h-4 w-4" />
-        For Business
+      <Link to="/my-stamp-cards" className="font-medium hover:text-primary transition-colors flex items-center gap-1">
+        <Stamp className="h-4 w-4" />
+        My Stamp Cards
       </Link>
     </>
   );
@@ -46,11 +40,6 @@ export const Navbar = () => {
 
         {isMobile ? (
           <div className="flex items-center gap-4">
-            <Link to="/cart">
-              <Button variant="ghost" size="icon">
-                <ShoppingCart className="h-5 w-5" />
-              </Button>
-            </Link>
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -60,12 +49,18 @@ export const Navbar = () => {
               <SheetContent>
                 <div className="flex flex-col mt-8 gap-6">
                   <NavLinks />
-                  <Button asChild>
-                    <Link to="/profile">
-                      <User className="mr-2 h-4 w-4" />
-                      Profile
-                    </Link>
-                  </Button>
+                  {user ? (
+                    <Button asChild>
+                      <Link to="/profile">
+                        <User className="mr-2 h-4 w-4" />
+                        Profile
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button asChild>
+                      <Link to="/auth">Sign In</Link>
+                    </Button>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
@@ -79,17 +74,18 @@ export const Navbar = () => {
         {!isMobile && (
           <div className="flex items-center gap-4">
             {user && <RoleSwitcher />}
-            <Link to="/cart">
-              <Button variant="ghost" size="icon">
-                <ShoppingCart className="h-5 w-5" />
+            {user ? (
+              <Button asChild>
+                <Link to="/profile">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </Link>
               </Button>
-            </Link>
-            <Button asChild>
-              <Link to="/profile">
-                <User className="mr-2 h-4 w-4" />
-                Profile
-              </Link>
-            </Button>
+            ) : (
+              <Button asChild>
+                <Link to="/auth">Sign In</Link>
+              </Button>
+            )}
           </div>
         )}
       </div>

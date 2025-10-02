@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronDown, User, Store, Shield } from "lucide-react";
 import { useUserRole } from "@/hooks/useUserRole";
 import { UserRole } from "@/types/database.types";
+import { useNavigate } from "react-router-dom";
 
 const roleConfig = {
   customer: {
@@ -33,6 +34,7 @@ const roleConfig = {
 
 export const RoleSwitcher = () => {
   const { role, isLoading, switchRole } = useUserRole();
+  const navigate = useNavigate();
 
   if (isLoading || !role) return null;
 
@@ -41,7 +43,16 @@ export const RoleSwitcher = () => {
 
   const handleRoleSwitch = (newRole: UserRole) => {
     if (newRole !== role) {
-      switchRole.mutate(newRole);
+      switchRole.mutate(newRole, {
+        onSuccess: () => {
+          // Navigate based on the new role
+          if (newRole === 'vendor') {
+            navigate('/vendor-dashboard');
+          } else if (newRole === 'customer') {
+            navigate('/');
+          }
+        }
+      });
     }
   };
 

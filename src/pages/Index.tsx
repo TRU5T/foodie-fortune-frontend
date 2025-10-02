@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { RestaurantCard } from "@/components/RestaurantCard";
 import { RewardCard } from "@/components/RewardCard";
 import { PointsSummary } from "@/components/PointsSummary";
@@ -7,10 +7,12 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LandingPage } from "@/components/LandingPage";
 import { useAuth } from "@/context/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { ArrowRight, UtensilsCrossed, Trophy, Clock } from "lucide-react";
 
 const Index = () => {
   const { user, isLoading } = useAuth();
+  const { role, isLoading: isLoadingRole } = useUserRole();
 
   // Show landing page for non-authenticated users
   if (!isLoading && !user) {
@@ -18,7 +20,7 @@ const Index = () => {
   }
 
   // Show loading state
-  if (isLoading) {
+  if (isLoading || isLoadingRole) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
@@ -31,6 +33,11 @@ const Index = () => {
         <Footer />
       </div>
     );
+  }
+
+  // Redirect vendors to their dashboard
+  if (role === 'vendor') {
+    return <Navigate to="/vendor-dashboard" replace />;
   }
   // Mock data
   const featuredRestaurants = [
@@ -101,10 +108,10 @@ const Index = () => {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-                  <Link to="/restaurants">Order Now</Link>
+                  <Link to="/restaurants">Explore Restaurants</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                  <Link to="/rewards">View Rewards</Link>
+                  <Link to="/my-stamp-cards">My Stamp Cards</Link>
                 </Button>
               </div>
             </div>
@@ -120,18 +127,18 @@ const Index = () => {
                 <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
                   <UtensilsCrossed className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Order Food</h3>
+                <h3 className="text-xl font-semibold mb-2">Visit Restaurants</h3>
                 <p className="text-muted-foreground">
-                  Browse and order from a variety of restaurants in your area.
+                  Browse and visit restaurants in your area to collect stamps.
                 </p>
               </div>
               <div className="bg-card p-6 rounded-lg text-center">
                 <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
                   <Trophy className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Earn Points</h3>
+                <h3 className="text-xl font-semibold mb-2">Collect Stamps</h3>
                 <p className="text-muted-foreground">
-                  Earn points with every purchase. The more you order, the more you earn!
+                  Collect stamps with every visit. The more you visit, the more rewards you earn!
                 </p>
               </div>
               <div className="bg-card p-6 rounded-lg text-center">
@@ -140,7 +147,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Redeem Rewards</h3>
                 <p className="text-muted-foreground">
-                  Use your points to get free meals, discounts, and other exclusive rewards.
+                  Complete your stamp card to get free items and other exclusive rewards.
                 </p>
               </div>
             </div>

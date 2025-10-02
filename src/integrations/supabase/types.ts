@@ -14,6 +14,92 @@ export type Database = {
   }
   public: {
     Tables: {
+      restaurants: {
+        Row: {
+          created_at: string
+          cuisine: string | null
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          owner_id: string | null
+          points_per_dollar: number
+          stamps_required: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cuisine?: string | null
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          owner_id?: string | null
+          points_per_dollar?: number
+          stamps_required?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cuisine?: string | null
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id?: string | null
+          points_per_dollar?: number
+          stamps_required?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      rewards: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          points_required: number
+          restaurant_id: string
+          stamps_required: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          points_required?: number
+          restaurant_id: string
+          stamps_required?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          points_required?: number
+          restaurant_id?: string
+          stamps_required?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rewards_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string

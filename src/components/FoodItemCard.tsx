@@ -47,9 +47,10 @@ export const FoodItemCard = ({
           onClick={() => onAddToCart(id)} 
           size="sm" 
           className="w-full"
+          disabled
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add to Cart
+          Coming Soon
         </Button>
       </CardFooter>
     </Card>
