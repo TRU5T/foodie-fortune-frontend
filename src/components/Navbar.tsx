@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { ShoppingCart, User, Menu, Stamp, Store } from "lucide-react";
+import { ShoppingCart, User, Menu, Stamp, Store, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -23,6 +23,12 @@ export const Navbar = () => {
         <Stamp className="h-4 w-4" />
         My Stamp Cards
       </Link>
+      {user && (
+        <Link to="/my-qr-code" className="font-medium hover:text-primary transition-colors flex items-center gap-1">
+          <QrCode className="h-4 w-4" />
+          My QR Code
+        </Link>
+      )}
     </>
   );
 

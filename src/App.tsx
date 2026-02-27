@@ -21,6 +21,8 @@ import Auth from "./pages/Auth";
 import VendorDashboard from "./pages/VendorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLanding from "./pages/AdminLanding";
+import MyQRCode from "./pages/MyQRCode";
+import VendorScanner from "./pages/VendorScanner";
 
 const queryClient = new QueryClient();
 
@@ -41,7 +43,9 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/business" element={<BusinessSubscription />} />
               <Route path="/my-stamp-cards" element={<MyStampCards />} />
+              <Route path="/my-qr-code" element={<MyQRCode />} />
               <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+              <Route path="/vendor-scanner" element={<VendorScanner />} />
               <Route path="/admin" element={<AdminLanding />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/auth" element={<Auth />} />
