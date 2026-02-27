@@ -3,7 +3,6 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
-import { QRCodeSVG } from "qrcode.react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { QrCode } from "lucide-react";
@@ -38,6 +37,8 @@ const MyQRCode = () => {
     );
   }
 
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(user.id)}`;
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -54,12 +55,7 @@ const MyQRCode = () => {
               Show this to the cashier to earn stamps or points
             </p>
             <div className="bg-white p-4 rounded-xl shadow-inner">
-              <QRCodeSVG
-                value={user.id}
-                size={220}
-                level="H"
-                includeMargin
-              />
+              <img src={qrUrl} alt="My QR Code" width={220} height={220} />
             </div>
             <div className="text-sm">
               <p className="font-medium">{profile?.full_name || 'Customer'}</p>
