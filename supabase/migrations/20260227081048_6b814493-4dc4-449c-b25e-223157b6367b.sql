@@ -1,0 +1,2 @@
+INSERT INTO public.restaurants (name, owner_id, cuisine, description, loyalty_type, stamps_required, points_per_dollar, vendor_tier)
+VALUES ('Sam''s Kitchen', '47910fd9-7c69-478a-a764-f17c477f320a', 'Australian', 'A cozy spot for great food and rewards', 'stamps', 10, 1, 'tier_1');
