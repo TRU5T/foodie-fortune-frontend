@@ -40,6 +40,7 @@ const VendorScanner = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const scanningRef = useRef(false);
+  const scanAttemptsRef = useRef(0);
   const detectorRef = useRef<any>(null);
 
   // Check BarcodeDetector support on mount
@@ -53,6 +54,12 @@ const VendorScanner = () => {
   }, []);
 
   const activeRestaurant = restaurants?.find(r => r.id === (selectedRestaurant || restaurants?.[0]?.id)) || restaurants?.[0];
+
+  const extractUserId = (rawValue: string) => {
+    const value = rawValue.trim();
+    const uuidMatch = value.match(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i);
+    return uuidMatch ? uuidMatch[0] : value;
+  };
 
   const { data: customerBalance } = useQuery({
     queryKey: ['customer-balance', customer?.id, activeRestaurant?.id, activeRestaurant?.loyalty_type],
@@ -80,61 +87,47 @@ const VendorScanner = () => {
     enabled: !!customer && !!activeRestaurant,
   });
 
-  const lookupCustomer = async (userId: string) => {
-    if (!activeRestaurant || !userId.trim()) return;
+  const lookupCustomer = async (rawValue: string) => {
+    if (!activeRestaurant) return;
+
+    const normalizedUserId = extractUserId(rawValue);
+    if (!normalizedUserId) return;
+
     setIsLookingUp(true);
 
-    // Check cooldown
-    const fiveMinAgo = new Date(Date.now() - COOLDOWN_MINUTES * 60 * 1000).toISOString();
-    const { data: recentScans } = await supabase
-      .from('scan_logs')
-      .select('id')
-      .eq('customer_user_id', userId)
-      .eq('restaurant_id', activeRestaurant.id)
-      .gte('created_at', fiveMinAgo)
-      .limit(1);
+    try {
+      // Check cooldown
+      const fiveMinAgo = new Date(Date.now() - COOLDOWN_MINUTES * 60 * 1000).toISOString();
+      const { data: recentScans } = await supabase
+        .from('scan_logs')
+        .select('id')
+        .eq('customer_user_id', normalizedUserId)
+        .eq('restaurant_id', activeRestaurant.id)
+        .gte('created_at', fiveMinAgo)
+        .limit(1);
 
-    setCooldownError(recentScans !== null && recentScans.length > 0);
+      setCooldownError(recentScans !== null && recentScans.length > 0);
 
-    // Fetch customer profile
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('id, full_name, email, avatar_url')
-      .eq('id', userId.trim())
-      .single();
+      // Fetch customer profile
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, avatar_url')
+        .eq('id', normalizedUserId)
+        .single();
 
-    if (error || !profile) {
-      toast({ title: "Customer not found", description: "No customer found with that ID.", variant: "destructive" });
+      if (error || !profile) {
+        toast({ title: "Customer not found", description: "No customer found with that ID.", variant: "destructive" });
+        return;
+      }
+
+      setCustomer(profile);
+      setScanState("customer-found");
+    } finally {
       setIsLookingUp(false);
-      return;
     }
-
-    setCustomer(profile);
-    setScanState("customer-found");
-    setIsLookingUp(false);
   };
 
   // Camera-based QR scanning using BarcodeDetector API
-  const startCamera = useCallback(async () => {
-    if (!barcodeSupported) {
-      toast({ title: "QR scanning not supported", description: "Your browser doesn't support BarcodeDetector. Use manual ID entry or try Chrome on Android.", variant: "destructive" });
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-        scanningRef.current = true;
-        setCameraActive(true);
-        scanLoop();
-      }
-    } catch {
-      toast({ title: "Camera unavailable", description: "Use manual ID entry instead.", variant: "destructive" });
-    }
-  }, [barcodeSupported]);
-
   const stopCamera = useCallback(() => {
     scanningRef.current = false;
     setCameraActive(false);
@@ -145,25 +138,83 @@ const VendorScanner = () => {
   }, []);
 
   const scanLoop = useCallback(() => {
-    if (!scanningRef.current || !videoRef.current || !detectorRef.current) return;
+    if (!scanningRef.current || !videoRef.current || !canvasRef.current || !detectorRef.current) return;
 
     const tick = async () => {
-      if (!scanningRef.current || !videoRef.current) return;
+      if (!scanningRef.current || !videoRef.current || !canvasRef.current || !detectorRef.current) return;
+
       try {
-        const barcodes = await detectorRef.current.detect(videoRef.current);
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+
+        if (video.readyState < 2 || video.videoWidth === 0 || video.videoHeight === 0) {
+          if (scanningRef.current) setTimeout(tick, 250);
+          return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          if (scanningRef.current) setTimeout(tick, 250);
+          return;
+        }
+
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const barcodes = await detectorRef.current.detect(canvas);
+
         if (barcodes.length > 0) {
           const value = barcodes[0].rawValue;
           stopCamera();
           lookupCustomer(value);
           return;
         }
-      } catch {}
+
+        scanAttemptsRef.current += 1;
+        if (scanAttemptsRef.current >= 60) {
+          stopCamera();
+          toast({ title: "QR not detected", description: "Try increasing screen brightness and distance, or use manual entry below.", variant: "destructive" });
+          return;
+        }
+      } catch {
+        scanAttemptsRef.current += 1;
+      }
+
       if (scanningRef.current) {
-        setTimeout(tick, 250); // scan 4x per second
+        setTimeout(tick, 250);
       }
     };
+
     tick();
-  }, [stopCamera]);
+  }, [lookupCustomer, stopCamera]);
+
+  const startCamera = useCallback(async () => {
+    if (!barcodeSupported) {
+      toast({ title: "QR scanning not supported", description: "Your browser doesn't support BarcodeDetector. Use manual ID entry or try Chrome on Android.", variant: "destructive" });
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+        scanAttemptsRef.current = 0;
+        scanningRef.current = true;
+        setCameraActive(true);
+        scanLoop();
+      }
+    } catch {
+      toast({ title: "Camera unavailable", description: "Use manual ID entry instead.", variant: "destructive" });
+    }
+  }, [barcodeSupported, scanLoop]);
 
   useEffect(() => {
     return () => stopCamera();
