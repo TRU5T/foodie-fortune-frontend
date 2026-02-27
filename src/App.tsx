@@ -22,7 +22,7 @@ import Auth from "./pages/Auth";
 import VendorDashboard from "./pages/VendorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLanding from "./pages/AdminLanding";
-import MyQRCode from "./pages/MyQRCode";
+const MyQRCode = lazy(() => import("./pages/MyQRCode"));
 const VendorScanner = lazy(() => import("./pages/VendorScanner"));
 
 const queryClient = new QueryClient();
@@ -44,7 +44,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/business" element={<BusinessSubscription />} />
               <Route path="/my-stamp-cards" element={<MyStampCards />} />
-              <Route path="/my-qr-code" element={<MyQRCode />} />
+              <Route path="/my-qr-code" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}><MyQRCode /></Suspense>} />
               <Route path="/vendor-dashboard" element={<VendorDashboard />} />
               <Route path="/vendor-scanner" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}><VendorScanner /></Suspense>} />
               <Route path="/admin" element={<AdminLanding />} />

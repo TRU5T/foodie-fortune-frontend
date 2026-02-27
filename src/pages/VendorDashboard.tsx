@@ -79,7 +79,7 @@ const VendorDashboard = () => {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-1 container py-8">
-        <div className="mb-6 flex items-center justify-between">
+         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Vendor Dashboard</h1>
             <p className="text-muted-foreground">Manage your store & rewards</p>
@@ -90,8 +90,6 @@ const VendorDashboard = () => {
                 <ScanLine className="h-4 w-4 mr-2" />Scan Customer
               </Link>
             </Button>
-          </div>
-          <div className="flex items-center gap-2">
             <Badge variant={isTier2 ? "default" : "secondary"}>
               {isTier2 ? "Tier 2 — Rewards + Ordering" : "Tier 1 — Rewards Only"}
             </Badge>
