@@ -12,11 +12,12 @@ type Reward = Tables<'rewards'>;
 
 interface EditRewardDialogProps {
   reward: Reward | null;
+  loyaltyType: 'stamps' | 'points';
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export const EditRewardDialog = ({ reward, open, onOpenChange }: EditRewardDialogProps) => {
+export const EditRewardDialog = ({ reward, loyaltyType, open, onOpenChange }: EditRewardDialogProps) => {
   const { updateReward } = useVendorRewards();
   const [formData, setFormData] = useState({
     name: "", description: "", stamps_required: 10, points_required: 0, image_url: "", is_active: true,
@@ -59,16 +60,17 @@ export const EditRewardDialog = ({ reward, open, onOpenChange }: EditRewardDialo
             <Label htmlFor="edit-description">Description</Label>
             <Textarea id="edit-description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={3} />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          {loyaltyType === 'stamps' ? (
             <div className="space-y-2">
-              <Label htmlFor="edit-stamps">Stamps Required</Label>
-              <Input id="edit-stamps" type="number" min="0" value={formData.stamps_required} onChange={(e) => setFormData({ ...formData, stamps_required: parseInt(e.target.value) })} />
+              <Label htmlFor="edit-stamps">Stamps Required *</Label>
+              <Input id="edit-stamps" type="number" min="1" value={formData.stamps_required} onChange={(e) => setFormData({ ...formData, stamps_required: parseInt(e.target.value) })} required />
             </div>
+          ) : (
             <div className="space-y-2">
-              <Label htmlFor="edit-points">Points Required</Label>
-              <Input id="edit-points" type="number" min="0" value={formData.points_required} onChange={(e) => setFormData({ ...formData, points_required: parseInt(e.target.value) })} />
+              <Label htmlFor="edit-points">Points Required *</Label>
+              <Input id="edit-points" type="number" min="1" value={formData.points_required} onChange={(e) => setFormData({ ...formData, points_required: parseInt(e.target.value) })} required />
             </div>
-          </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="edit-image">Image URL</Label>
             <Input id="edit-image" value={formData.image_url} onChange={(e) => setFormData({ ...formData, image_url: e.target.value })} />

@@ -1,163 +1,252 @@
 
-import { useState } from "react";
-import { RewardCard } from "@/components/RewardCard";
-import { PointsSummary } from "@/components/PointsSummary";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Award, Coffee } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+const StampCircles = ({ current, total }: { current: number; total: number }) => (
+  <div className="flex flex-wrap gap-2 justify-center py-2">
+    {Array.from({ length: total }).map((_, i) => (
+      <div
+        key={i}
+        className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${
+          i < current
+            ? "bg-primary border-primary text-primary-foreground"
+            : "border-muted-foreground/30 text-muted-foreground/30"
+        }`}
+      >
+        <Coffee className="h-4 w-4" />
+      </div>
+    ))}
+  </div>
+);
 
 const Rewards = () => {
-  const [activeTab, setActiveTab] = useState("available");
-  
-  // Mock data
-  const availableRewards = [
-    {
-      title: "Free Burger",
-      pointsRequired: 500,
-      currentPoints: 350,
-      image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=2304&auto=format&fit=crop",
-      expiryDate: "May 30, 2025",
-      isUnlocked: false,
+  const { user } = useAuth();
+
+  // Fetch stamp cards with restaurant + reward info
+  const { data: stampCards = [] } = useQuery({
+    queryKey: ["my-stamp-cards", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("stamp_cards")
+        .select("*, restaurant:restaurants(name, logo_url, loyalty_type, stamps_required)")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false });
+      if (error) throw error;
+      return data;
     },
-    {
-      title: "Free Delivery",
-      pointsRequired: 200,
-      currentPoints: 350,
-      image: "https://images.unsplash.com/photo-1526367790999-0150786686a2?q=80&w=2671&auto=format&fit=crop",
-      expiryDate: "May 15, 2025",
-      isUnlocked: true,
+    enabled: !!user,
+  });
+
+  // Fetch point balances with restaurant info
+  const { data: pointBalances = [] } = useQuery({
+    queryKey: ["my-point-balances", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("point_balances")
+        .select("*, restaurant:restaurants(name, logo_url, loyalty_type)")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false });
+      if (error) throw error;
+      return data;
     },
-    {
-      title: "10% Off Next Order",
-      pointsRequired: 250,
-      currentPoints: 350,
-      image: "https://images.unsplash.com/photo-1607083206968-13611e3d76db?q=80&w=2215&auto=format&fit=crop",
-      expiryDate: "June 15, 2025",
-      isUnlocked: true,
-    },
-    {
-      title: "Free Dessert",
-      pointsRequired: 300,
-      currentPoints: 350,
-      image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=2340&auto=format&fit=crop",
-      expiryDate: "May 20, 2025",
-      isUnlocked: true,
-    },
-    {
-      title: "Free Large Drink",
-      pointsRequired: 150,
-      currentPoints: 350,
-      image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=2340&auto=format&fit=crop",
-      expiryDate: "June 1, 2025",
-      isUnlocked: true,
-    },
-    {
-      title: "Premium Membership",
-      pointsRequired: 1000,
-      currentPoints: 350,
-      image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?q=80&w=2340&auto=format&fit=crop",
-      expiryDate: "December 31, 2025",
-      isUnlocked: false,
-    },
+    enabled: !!user,
+  });
+
+  // Fetch rewards for restaurants the user has stamp cards or point balances at
+  const restaurantIds = [
+    ...new Set([
+      ...stampCards.map((sc: any) => sc.restaurant_id),
+      ...pointBalances.map((pb: any) => pb.restaurant_id),
+    ]),
   ];
-  
-  const redeemedRewards = [
-    {
-      title: "Free Coffee",
-      pointsRequired: 100,
-      currentPoints: 350,
-      image: "https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=2338&auto=format&fit=crop",
-      expiryDate: "Used on April 10, 2025",
-      isUnlocked: true,
+
+  const { data: rewards = [] } = useQuery({
+    queryKey: ["my-available-rewards", restaurantIds],
+    queryFn: async () => {
+      if (restaurantIds.length === 0) return [];
+      const { data, error } = await supabase
+        .from("rewards")
+        .select("*")
+        .in("restaurant_id", restaurantIds)
+        .eq("is_active", true);
+      if (error) throw error;
+      return data;
     },
-    {
-      title: "Free Appetizer",
-      pointsRequired: 200,
-      currentPoints: 350,
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=2080&auto=format&fit=crop",
-      expiryDate: "Used on March 5, 2025",
-      isUnlocked: true,
+    enabled: restaurantIds.length > 0,
+  });
+
+  // Fetch redeemed rewards
+  const { data: userRewards = [] } = useQuery({
+    queryKey: ["my-user-rewards", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("user_rewards")
+        .select("*, reward:rewards(name, description, restaurant_id, stamps_required, points_required)")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
     },
-  ];
+    enabled: !!user,
+  });
+
+  if (!user) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1 container py-8 flex items-center justify-center">
+          <p className="text-muted-foreground">Please sign in to view your rewards.</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const redeemedRewards = userRewards.filter((ur: any) => ur.is_redeemed);
+  const activeRewards = userRewards.filter((ur: any) => !ur.is_redeemed);
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-1">
-        <div className="container py-8">
-          <h1 className="text-3xl font-bold mb-8">My Rewards</h1>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
-            <div className="lg:col-span-1">
-              <PointsSummary 
-                points={350} 
-                level="Silver" 
-                nextLevelPoints={500} 
-                lifetimePoints={1250}
-              />
-              
-              <div className="mt-8 bg-card border rounded-lg p-6">
-                <h3 className="font-semibold mb-4">Membership Benefits</h3>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
-                      <span className="text-xs text-primary font-bold">✓</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Silver Member</p>
-                      <p className="text-xs text-muted-foreground">2x points on orders</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center mt-0.5">
-                      <span className="text-xs text-muted-foreground">+</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Gold Member</p>
-                      <p className="text-xs text-muted-foreground">3x points on orders</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center mt-0.5">
-                      <span className="text-xs text-muted-foreground">+</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Platinum Member</p>
-                      <p className="text-xs text-muted-foreground">4x points on orders</p>
-                    </div>
-                  </div>
-                </div>
-                <Button className="w-full mt-4" variant="outline">View All Benefits</Button>
+      <main className="flex-1 container py-8">
+        <h1 className="text-3xl font-bold mb-8">My Rewards</h1>
+
+        <Tabs defaultValue="progress" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="progress">My Progress</TabsTrigger>
+            <TabsTrigger value="redeemed">Redeemed ({redeemedRewards.length})</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="progress">
+            {stampCards.length === 0 && pointBalances.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <Award className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">No Rewards Yet</h3>
+                  <p className="text-muted-foreground">
+                    Visit a restaurant and start earning stamps or points!
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Stamp-based cards */}
+                {stampCards.map((sc: any) => {
+                  const restaurantRewards = rewards.filter(
+                    (r: any) => r.restaurant_id === sc.restaurant_id && r.stamps_required > 0
+                  );
+                  return (
+                    <Card key={sc.id}>
+                      <CardHeader className="pb-2">
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-lg">{sc.restaurant?.name || "Restaurant"}</CardTitle>
+                          <Badge variant="secondary">Stamps</Badge>
+                        </div>
+                        {restaurantRewards.length > 0 && (
+                          <p className="text-sm text-muted-foreground">
+                            Working towards: {restaurantRewards.map((r: any) => r.name).join(", ")}
+                          </p>
+                        )}
+                      </CardHeader>
+                      <CardContent>
+                        <StampCircles current={sc.current_stamps} total={sc.total_stamps_required} />
+                        <p className="text-center text-sm text-muted-foreground mt-2">
+                          {sc.current_stamps} / {sc.total_stamps_required} stamps
+                          {sc.is_complete && (
+                            <Badge className="ml-2" variant="default">Complete!</Badge>
+                          )}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+
+                {/* Points-based cards */}
+                {pointBalances.map((pb: any) => {
+                  const restaurantRewards = rewards.filter(
+                    (r: any) => r.restaurant_id === pb.restaurant_id && r.points_required > 0
+                  );
+                  const nextReward = restaurantRewards.sort(
+                    (a: any, b: any) => a.points_required - b.points_required
+                  )[0];
+                  const progressPercent = nextReward
+                    ? Math.min((pb.balance / nextReward.points_required) * 100, 100)
+                    : 0;
+
+                  return (
+                    <Card key={pb.id}>
+                      <CardHeader className="pb-2">
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-lg">{pb.restaurant?.name || "Restaurant"}</CardTitle>
+                          <Badge variant="secondary">Points</Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="text-center">
+                          <span className="text-3xl font-bold text-primary">{pb.balance}</span>
+                          <span className="text-muted-foreground ml-1">points</span>
+                        </div>
+                        {nextReward ? (
+                          <div>
+                            <div className="flex justify-between text-sm mb-1">
+                              <span className="text-muted-foreground">Next: {nextReward.name}</span>
+                              <span className="font-medium">{pb.balance}/{nextReward.points_required}</span>
+                            </div>
+                            <Progress value={progressPercent} className="h-3" />
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground text-center">No rewards available yet</p>
+                        )}
+                        {restaurantRewards.length > 1 && (
+                          <p className="text-xs text-muted-foreground text-center">
+                            {restaurantRewards.length} rewards available
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
-            </div>
-            
-            <div className="lg:col-span-3">
-              <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="available">Available Rewards</TabsTrigger>
-                  <TabsTrigger value="redeemed">Redeemed Rewards</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="available" className="mt-0">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {availableRewards.map((reward, index) => (
-                      <RewardCard key={index} {...reward} />
-                    ))}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="redeemed" className="mt-0">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {redeemedRewards.map((reward, index) => (
-                      <RewardCard key={index} {...reward} />
-                    ))}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
-        </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="redeemed">
+            {redeemedRewards.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <Award className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">No Redeemed Rewards</h3>
+                  <p className="text-muted-foreground">Rewards you redeem will appear here.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {redeemedRewards.map((ur: any) => (
+                  <Card key={ur.id} className="opacity-75">
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold">{ur.reward?.name || "Reward"}</h3>
+                      <p className="text-sm text-muted-foreground">{ur.reward?.description}</p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Redeemed: {ur.redeemed_at ? new Date(ur.redeemed_at).toLocaleDateString() : "N/A"}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </main>
       <Footer />
     </div>

@@ -67,7 +67,7 @@ export const RewardManagement = ({ restaurantId, loyaltyType }: RewardManagement
         ))}
       </div>
 
-      <EditRewardDialog reward={editingReward} open={!!editingReward} onOpenChange={(open) => !open && setEditingReward(null)} />
+      <EditRewardDialog reward={editingReward} loyaltyType={loyaltyType} open={!!editingReward} onOpenChange={(open) => !open && setEditingReward(null)} />
 
       <AlertDialog open={!!deletingReward} onOpenChange={(open) => !open && setDeletingReward(null)}>
         <AlertDialogContent>
