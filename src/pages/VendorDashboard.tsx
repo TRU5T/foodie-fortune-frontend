@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Store, ArrowUpCircle, Utensils } from "lucide-react";
+import { Plus, Store, ArrowUpCircle, Utensils, ScanLine } from "lucide-react";
 import { useVendorRewards } from "@/hooks/useVendorRewards";
 import { RewardManagement } from "@/components/vendor/RewardManagement";
 import { CreateRewardDialog } from "@/components/vendor/CreateRewardDialog";
@@ -82,6 +83,13 @@ const VendorDashboard = () => {
           <div>
             <h1 className="text-3xl font-bold">Vendor Dashboard</h1>
             <p className="text-muted-foreground">Manage your store & rewards</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button asChild>
+              <Link to="/vendor-scanner">
+                <ScanLine className="h-4 w-4 mr-2" />Scan Customer
+              </Link>
+            </Button>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant={isTier2 ? "default" : "secondary"}>

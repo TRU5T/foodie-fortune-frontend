@@ -361,6 +361,47 @@ export type Database = {
           },
         ]
       }
+      scan_logs: {
+        Row: {
+          action_type: string
+          created_at: string
+          customer_user_id: string
+          id: string
+          points_awarded: number
+          restaurant_id: string
+          stamps_awarded: number
+          vendor_user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          customer_user_id: string
+          id?: string
+          points_awarded?: number
+          restaurant_id: string
+          stamps_awarded?: number
+          vendor_user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          customer_user_id?: string
+          id?: string
+          points_awarded?: number
+          restaurant_id?: string
+          stamps_awarded?: number
+          vendor_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_logs_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stamp_cards: {
         Row: {
           created_at: string
