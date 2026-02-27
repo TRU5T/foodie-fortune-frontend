@@ -1,27 +1,17 @@
-
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
-import { Restaurant } from '@/types/database.types';
-import { toast } from '@/components/ui/use-toast';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 export const useRestaurants = () => {
   return useQuery({
     queryKey: ['restaurants'],
-    queryFn: async (): Promise<Restaurant[]> => {
-      const { data, error } = await supabase
-        .from('restaurants')
-        .select('*');
-      
+    queryFn: async () => {
+      const { data, error } = await supabase.from('restaurants').select('*');
       if (error) {
-        toast({
-          title: "Error fetching restaurants",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast({ title: "Error fetching restaurants", description: error.message, variant: "destructive" });
         throw error;
       }
-      
-      return data as Restaurant[];
+      return data;
     }
   });
 };
@@ -29,23 +19,13 @@ export const useRestaurants = () => {
 export const useRestaurant = (id: string) => {
   return useQuery({
     queryKey: ['restaurant', id],
-    queryFn: async (): Promise<Restaurant> => {
-      const { data, error } = await supabase
-        .from('restaurants')
-        .select('*')
-        .eq('id', id)
-        .single();
-      
+    queryFn: async () => {
+      const { data, error } = await supabase.from('restaurants').select('*').eq('id', id).single();
       if (error) {
-        toast({
-          title: "Error fetching restaurant",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast({ title: "Error fetching restaurant", description: error.message, variant: "destructive" });
         throw error;
       }
-      
-      return data as Restaurant;
+      return data;
     },
     enabled: !!id
   });

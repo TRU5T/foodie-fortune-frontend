@@ -8,27 +8,29 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, User, Store, Shield } from "lucide-react";
 import { useUserRole } from "@/hooks/useUserRole";
-import { UserRole } from "@/types/database.types";
 import { useNavigate } from "react-router-dom";
+import type { Database } from "@/integrations/supabase/types";
 
-const roleConfig = {
+type AppRole = Database['public']['Enums']['app_role'];
+
+const roleConfig: Record<AppRole, { label: string; icon: typeof User; description: string; variant: "default" | "secondary" | "destructive" }> = {
   customer: {
     label: "Customer",
     icon: User,
     description: "Browse restaurants & earn rewards",
-    variant: "default" as const,
+    variant: "default",
   },
   vendor: {
     label: "Vendor",
     icon: Store,
     description: "Manage your restaurant",
-    variant: "secondary" as const,
+    variant: "secondary",
   },
   admin: {
     label: "Admin",
     icon: Shield,
     description: "System administration",
-    variant: "destructive" as const,
+    variant: "destructive",
   },
 };
 
@@ -41,16 +43,13 @@ export const RoleSwitcher = () => {
   const currentRole = roleConfig[role];
   const CurrentIcon = currentRole.icon;
 
-  const handleRoleSwitch = (newRole: UserRole) => {
+  const handleRoleSwitch = (newRole: AppRole) => {
     if (newRole !== role) {
       switchRole.mutate(newRole, {
         onSuccess: () => {
-          // Navigate based on the new role
-          if (newRole === 'vendor') {
-            navigate('/vendor-dashboard');
-          } else if (newRole === 'customer') {
-            navigate('/');
-          }
+          if (newRole === 'vendor') navigate('/vendor-dashboard');
+          else if (newRole === 'admin') navigate('/admin');
+          else navigate('/');
         }
       });
     }
@@ -66,29 +65,22 @@ export const RoleSwitcher = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
-        {Object.entries(roleConfig).map(([roleKey, config]) => {
+        {(Object.entries(roleConfig) as [AppRole, typeof roleConfig[AppRole]][]).map(([roleKey, config]) => {
           const Icon = config.icon;
           const isActive = role === roleKey;
-          
           return (
             <DropdownMenuItem
               key={roleKey}
-              onClick={() => handleRoleSwitch(roleKey as UserRole)}
+              onClick={() => handleRoleSwitch(roleKey)}
               disabled={isActive || switchRole.isPending}
               className="flex flex-col items-start gap-1 p-3"
             >
               <div className="flex items-center gap-2 w-full">
                 <Icon className="h-4 w-4" />
                 <span className="font-medium">{config.label}</span>
-                {isActive && (
-                  <Badge variant={config.variant} className="ml-auto text-xs">
-                    Active
-                  </Badge>
-                )}
+                {isActive && <Badge variant={config.variant} className="ml-auto text-xs">Active</Badge>}
               </div>
-              <span className="text-xs text-muted-foreground">
-                {config.description}
-              </span>
+              <span className="text-xs text-muted-foreground">{config.description}</span>
             </DropdownMenuItem>
           );
         })}
