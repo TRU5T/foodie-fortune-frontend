@@ -1,19 +1,18 @@
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 import { useVendorRewards } from "@/hooks/useVendorRewards";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ScanLine, User, Plus, Minus, Check, AlertCircle, ArrowLeft } from "lucide-react";
-import { Html5Qrcode } from "html5-qrcode";
+import { ScanLine, User, Plus, Minus, Check, AlertCircle, ArrowLeft, Keyboard } from "lucide-react";
 
-type ScanState = "scanning" | "customer-found" | "awarding" | "success";
+type ScanState = "input" | "customer-found" | "success";
 
 interface CustomerProfile {
   id: string;
@@ -28,16 +27,20 @@ const VendorScanner = () => {
   const { user } = useAuth();
   const { restaurants, isLoadingRestaurants } = useVendorRewards();
   const queryClient = useQueryClient();
-  const scannerRef = useRef<Html5Qrcode | null>(null);
-  const [scanState, setScanState] = useState<ScanState>("scanning");
+  const [scanState, setScanState] = useState<ScanState>("input");
   const [customer, setCustomer] = useState<CustomerProfile | null>(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState<string | null>(null);
   const [stampCount, setStampCount] = useState(1);
   const [cooldownError, setCooldownError] = useState(false);
+  const [manualId, setManualId] = useState("");
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const scanningRef = useRef(false);
 
   const activeRestaurant = restaurants?.find(r => r.id === (selectedRestaurant || restaurants?.[0]?.id)) || restaurants?.[0];
 
-  // Fetch customer's existing stamp/point balance for this restaurant
   const { data: customerBalance } = useQuery({
     queryKey: ['customer-balance', customer?.id, activeRestaurant?.id, activeRestaurant?.loyalty_type],
     queryFn: async () => {
@@ -64,49 +67,9 @@ const VendorScanner = () => {
     enabled: !!customer && !!activeRestaurant,
   });
 
-  const startScanner = useCallback(async () => {
-    if (scannerRef.current) {
-      try { await scannerRef.current.stop(); } catch {}
-    }
-    const scanner = new Html5Qrcode("qr-reader");
-    scannerRef.current = scanner;
-    try {
-      await scanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        async (decodedText) => {
-          await scanner.stop();
-          handleScan(decodedText);
-        },
-        () => {}
-      );
-    } catch (err) {
-      toast({ title: "Camera error", description: "Could not access camera. Please check permissions.", variant: "destructive" });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (scanState === "scanning" && activeRestaurant) {
-      const timeout = setTimeout(() => startScanner(), 300);
-      return () => {
-        clearTimeout(timeout);
-        if (scannerRef.current) {
-          scannerRef.current.stop().catch(() => {});
-        }
-      };
-    }
-  }, [scanState, activeRestaurant, startScanner]);
-
-  useEffect(() => {
-    return () => {
-      if (scannerRef.current) {
-        scannerRef.current.stop().catch(() => {});
-      }
-    };
-  }, []);
-
-  const handleScan = async (userId: string) => {
-    if (!activeRestaurant) return;
+  const lookupCustomer = async (userId: string) => {
+    if (!activeRestaurant || !userId.trim()) return;
+    setIsLookingUp(true);
 
     // Check cooldown
     const fiveMinAgo = new Date(Date.now() - COOLDOWN_MINUTES * 60 * 1000).toISOString();
@@ -118,38 +81,81 @@ const VendorScanner = () => {
       .gte('created_at', fiveMinAgo)
       .limit(1);
 
-    if (recentScans && recentScans.length > 0) {
-      setCooldownError(true);
-      setScanState("customer-found");
-    } else {
-      setCooldownError(false);
-    }
+    setCooldownError(recentScans !== null && recentScans.length > 0);
 
     // Fetch customer profile
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('id, full_name, email, avatar_url')
-      .eq('id', userId)
+      .eq('id', userId.trim())
       .single();
 
     if (error || !profile) {
-      toast({ title: "Customer not found", description: "This QR code doesn't match a registered customer.", variant: "destructive" });
-      setScanState("scanning");
+      toast({ title: "Customer not found", description: "No customer found with that ID.", variant: "destructive" });
+      setIsLookingUp(false);
       return;
     }
 
     setCustomer(profile);
     setScanState("customer-found");
+    setIsLookingUp(false);
   };
+
+  // Camera-based QR scanning using BarcodeDetector API
+  const startCamera = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+        scanningRef.current = true;
+        scanFrame();
+      }
+    } catch {
+      toast({ title: "Camera unavailable", description: "Use manual ID entry instead.", variant: "destructive" });
+    }
+  }, []);
+
+  const stopCamera = useCallback(() => {
+    scanningRef.current = false;
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current = null;
+    }
+  }, []);
+
+  const scanFrame = useCallback(async () => {
+    if (!scanningRef.current || !videoRef.current || !canvasRef.current) return;
+
+    if ('BarcodeDetector' in window) {
+      try {
+        // @ts-ignore - BarcodeDetector is not yet in TS types
+        const detector = new BarcodeDetector({ formats: ['qr_code'] });
+        const barcodes = await detector.detect(videoRef.current);
+        if (barcodes.length > 0) {
+          stopCamera();
+          lookupCustomer(barcodes[0].rawValue);
+          return;
+        }
+      } catch {}
+    }
+
+    if (scanningRef.current) {
+      requestAnimationFrame(scanFrame);
+    }
+  }, [stopCamera]);
+
+  useEffect(() => {
+    return () => stopCamera();
+  }, [stopCamera]);
 
   const awardLoyalty = useMutation({
     mutationFn: async () => {
       if (!user || !customer || !activeRestaurant) throw new Error('Missing data');
-
       const isStamps = activeRestaurant.loyalty_type === 'stamps';
 
       if (isStamps) {
-        // Get or create stamp card
         const { data: existingCards } = await supabase
           .from('stamp_cards')
           .select('*')
@@ -158,12 +164,11 @@ const VendorScanner = () => {
           .eq('is_complete', false);
 
         if (!existingCards || existingCards.length === 0) {
-          const newStamps = stampCount;
-          const isComplete = newStamps >= activeRestaurant.stamps_required;
+          const isComplete = stampCount >= activeRestaurant.stamps_required;
           await supabase.from('stamp_cards').insert([{
             user_id: customer.id,
             restaurant_id: activeRestaurant.id,
-            current_stamps: newStamps,
+            current_stamps: stampCount,
             total_stamps_required: activeRestaurant.stamps_required,
             is_complete: isComplete,
           }]);
@@ -176,7 +181,6 @@ const VendorScanner = () => {
             .eq('id', card.id);
         }
       } else {
-        // Points: award based on points_per_dollar * amount (using stampCount as dollar amount for simplicity)
         const pointsToAward = Math.floor(stampCount * activeRestaurant.points_per_dollar);
         const { data: existing } = await supabase
           .from('point_balances')
@@ -200,7 +204,6 @@ const VendorScanner = () => {
         }
       }
 
-      // Log the scan
       await supabase.from('scan_logs').insert([{
         vendor_user_id: user.id,
         customer_user_id: customer.id,
@@ -223,7 +226,8 @@ const VendorScanner = () => {
     setCustomer(null);
     setCooldownError(false);
     setStampCount(1);
-    setScanState("scanning");
+    setManualId("");
+    setScanState("input");
   };
 
   if (isLoadingRestaurants) {
@@ -261,8 +265,7 @@ const VendorScanner = () => {
           {activeRestaurant?.name} — {isStamps ? '🎟️ Stamps' : '⭐ Points'}
         </p>
 
-        {/* Restaurant selector if multiple */}
-        {restaurants.length > 1 && scanState === "scanning" && (
+        {restaurants.length > 1 && scanState === "input" && (
           <div className="flex gap-2 mb-4 flex-wrap">
             {restaurants.map(r => (
               <Button
@@ -277,16 +280,50 @@ const VendorScanner = () => {
           </div>
         )}
 
-        {/* Scanning state */}
-        {scanState === "scanning" && (
-          <Card>
-            <CardContent className="p-4">
-              <div id="qr-reader" className="w-full rounded-lg overflow-hidden" />
-              <p className="text-center text-sm text-muted-foreground mt-3">
-                Point camera at customer's QR code
-              </p>
-            </CardContent>
-          </Card>
+        {/* Input state - camera + manual entry */}
+        {scanState === "input" && (
+          <div className="space-y-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <ScanLine className="h-5 w-5" /> Camera Scanner
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative rounded-lg overflow-hidden bg-muted aspect-square max-h-64 mx-auto">
+                  <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
+                  <canvas ref={canvasRef} className="hidden" />
+                </div>
+                <Button className="w-full mt-3" variant="outline" onClick={startCamera}>
+                  <ScanLine className="h-4 w-4 mr-2" /> Start Camera
+                </Button>
+                <p className="text-xs text-muted-foreground text-center mt-2">
+                  Uses device camera to scan QR codes (requires BarcodeDetector support)
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Keyboard className="h-5 w-5" /> Manual Entry
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Enter customer ID"
+                    value={manualId}
+                    onChange={(e) => setManualId(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && lookupCustomer(manualId)}
+                  />
+                  <Button onClick={() => lookupCustomer(manualId)} disabled={isLookingUp || !manualId.trim()}>
+                    {isLookingUp ? "Looking up..." : "Look Up"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {/* Customer found */}
@@ -341,12 +378,7 @@ const VendorScanner = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-center gap-4 mb-4">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setStampCount(Math.max(1, stampCount - 1))}
-                      disabled={stampCount <= 1}
-                    >
+                    <Button variant="outline" size="icon" onClick={() => setStampCount(Math.max(1, stampCount - 1))} disabled={stampCount <= 1}>
                       <Minus className="h-4 w-4" />
                     </Button>
                     <div className="text-center">
@@ -355,20 +387,11 @@ const VendorScanner = () => {
                         {isStamps ? (stampCount === 1 ? 'stamp' : 'stamps') : `$${stampCount} = ${Math.floor(stampCount * (activeRestaurant?.points_per_dollar || 1))} pts`}
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setStampCount(stampCount + 1)}
-                    >
+                    <Button variant="outline" size="icon" onClick={() => setStampCount(stampCount + 1)}>
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <Button
-                    className="w-full"
-                    size="lg"
-                    onClick={() => awardLoyalty.mutate()}
-                    disabled={awardLoyalty.isPending}
-                  >
+                  <Button className="w-full" size="lg" onClick={() => awardLoyalty.mutate()} disabled={awardLoyalty.isPending}>
                     <Check className="h-4 w-4 mr-2" />
                     {awardLoyalty.isPending ? 'Awarding...' : isStamps ? `Award ${stampCount} Stamp${stampCount > 1 ? 's' : ''}` : `Award ${Math.floor(stampCount * (activeRestaurant?.points_per_dollar || 1))} Points`}
                   </Button>
@@ -390,9 +413,7 @@ const VendorScanner = () => {
                 <Check className="h-8 w-8 text-primary" />
               </div>
               <h2 className="text-xl font-bold mb-2">Loyalty Awarded!</h2>
-              <p className="text-muted-foreground mb-1">
-                {customer?.full_name || 'Customer'} received
-              </p>
+              <p className="text-muted-foreground mb-1">{customer?.full_name || 'Customer'} received</p>
               <p className="text-2xl font-bold text-primary">
                 {isStamps
                   ? `${stampCount} stamp${stampCount > 1 ? 's' : ''}`
