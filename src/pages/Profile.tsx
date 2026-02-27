@@ -9,8 +9,18 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Clock, MapPin, Receipt, CreditCard, User, Lock, LogOut } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
   // Mock data
   const recentOrders = [
     {
@@ -113,7 +123,7 @@ const Profile = () => {
                     <Lock className="mr-2 h-4 w-4" />
                     Change Password
                   </Button>
-                  <Button variant="outline" className="w-full justify-start mt-2 text-destructive">
+                  <Button variant="outline" className="w-full justify-start mt-2 text-destructive" onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
                   </Button>
