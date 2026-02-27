@@ -35,10 +35,11 @@ const roleConfig: Record<AppRole, { label: string; icon: typeof User; descriptio
 };
 
 export const RoleSwitcher = () => {
-  const { role, isLoading, switchRole } = useUserRole();
+  const { role, availableRoles, isLoading, switchRole } = useUserRole();
   const navigate = useNavigate();
 
-  if (isLoading || !role) return null;
+  // Hide if loading, no role, or user only has one role (no switching needed)
+  if (isLoading || !role || availableRoles.length <= 1) return null;
 
   const currentRole = roleConfig[role];
   const CurrentIcon = currentRole.icon;
@@ -65,7 +66,8 @@ export const RoleSwitcher = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
-        {(Object.entries(roleConfig) as [AppRole, typeof roleConfig[AppRole]][]).map(([roleKey, config]) => {
+        {availableRoles.filter(r => r in roleConfig).map((roleKey) => {
+          const config = roleConfig[roleKey];
           const Icon = config.icon;
           const isActive = role === roleKey;
           return (
