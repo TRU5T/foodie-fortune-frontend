@@ -55,10 +55,22 @@ const VendorScanner = () => {
 
   const activeRestaurant = restaurants?.find(r => r.id === (selectedRestaurant || restaurants?.[0]?.id)) || restaurants?.[0];
 
-  const extractUserId = (rawValue: string) => {
+  const parseLookupInput = (rawValue: string): { type: 'email' | 'phone'; value: string } | null => {
     const value = rawValue.trim();
-    const uuidMatch = value.match(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i);
-    return uuidMatch ? uuidMatch[0] : value;
+    if (!value) return null;
+
+    const emailMatch = value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+    if (emailMatch) {
+      return { type: 'email', value: emailMatch[0].toLowerCase() };
+    }
+
+    const phoneCandidate = value.replace(/[^\d+]/g, '');
+    const phoneDigits = phoneCandidate.replace(/\D/g, '');
+    if (phoneDigits.length >= 8) {
+      return { type: 'phone', value: phoneCandidate.startsWith('+') ? phoneCandidate : phoneDigits };
+    }
+
+    return null;
   };
 
   const { data: customerBalance } = useQuery({
@@ -90,38 +102,71 @@ const VendorScanner = () => {
   const lookupCustomer = async (rawValue: string) => {
     if (!activeRestaurant) return;
 
-    const normalizedUserId = extractUserId(rawValue);
-    if (!normalizedUserId) return;
+    const parsedLookup = parseLookupInput(rawValue);
+    if (!parsedLookup) {
+      toast({ title: "Invalid input", description: "Enter a valid email or mobile number.", variant: "destructive" });
+      return;
+    }
 
     setIsLookingUp(true);
 
     try {
-      // Check cooldown
+      let profile: CustomerProfile | null = null;
+
+      if (parsedLookup.type === 'email') {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, full_name, email, avatar_url')
+          .ilike('email', parsedLookup.value)
+          .limit(1);
+
+        if (error) throw error;
+        profile = data?.[0] ?? null;
+      } else {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, full_name, email, avatar_url')
+          .eq('phone', parsedLookup.value)
+          .limit(1);
+
+        if (error) throw error;
+        profile = data?.[0] ?? null;
+
+        if (!profile) {
+          const phoneDigits = parsedLookup.value.replace(/\D/g, '');
+          if (phoneDigits.length >= 8) {
+            const { data: fuzzyData, error: fuzzyError } = await supabase
+              .from('profiles')
+              .select('id, full_name, email, avatar_url')
+              .ilike('phone', `%${phoneDigits}%`)
+              .limit(1);
+
+            if (fuzzyError) throw fuzzyError;
+            profile = fuzzyData?.[0] ?? null;
+          }
+        }
+      }
+
+      if (!profile) {
+        toast({ title: "Customer not found", description: "No customer found with that email or mobile.", variant: "destructive" });
+        return;
+      }
+
       const fiveMinAgo = new Date(Date.now() - COOLDOWN_MINUTES * 60 * 1000).toISOString();
       const { data: recentScans } = await supabase
         .from('scan_logs')
         .select('id')
-        .eq('customer_user_id', normalizedUserId)
+        .eq('customer_user_id', profile.id)
         .eq('restaurant_id', activeRestaurant.id)
         .gte('created_at', fiveMinAgo)
         .limit(1);
 
       setCooldownError(recentScans !== null && recentScans.length > 0);
-
-      // Fetch customer profile
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, avatar_url')
-        .eq('id', normalizedUserId)
-        .single();
-
-      if (error || !profile) {
-        toast({ title: "Customer not found", description: "No customer found with that ID.", variant: "destructive" });
-        return;
-      }
-
       setCustomer(profile);
       setScanState("customer-found");
+    } catch (error) {
+      toast({ title: "Lookup failed", description: "Please try again.", variant: "destructive" });
+      console.error("Customer lookup failed", error);
     } finally {
       setIsLookingUp(false);
     }
@@ -190,10 +235,14 @@ const VendorScanner = () => {
   }, [lookupCustomer, stopCamera]);
 
   const startCamera = useCallback(async () => {
-    if (!barcodeSupported) {
-      toast({ title: "QR scanning not supported", description: "Your browser doesn't support BarcodeDetector. Use manual ID entry or try Chrome on Android.", variant: "destructive" });
+    if (barcodeSupported !== true) {
+      toast({
+        title: "Camera scanning unavailable on this browser",
+        description: "Use manual email or mobile entry below (iPhone browsers do not support BarcodeDetector yet).",
+      });
       return;
     }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -212,7 +261,7 @@ const VendorScanner = () => {
         scanLoop();
       }
     } catch {
-      toast({ title: "Camera unavailable", description: "Use manual ID entry instead.", variant: "destructive" });
+      toast({ title: "Camera unavailable", description: "Use manual email or mobile entry instead.", variant: "destructive" });
     }
   }, [barcodeSupported, scanLoop]);
 
@@ -361,8 +410,8 @@ const VendorScanner = () => {
               </CardHeader>
               <CardContent>
                 {barcodeSupported === false && (
-                  <div className="p-3 bg-destructive/10 rounded-lg text-sm text-destructive mb-3">
-                    ⚠️ Your browser doesn't support QR scanning. Use <strong>Chrome on Android</strong> or try <strong>manual entry</strong> below.
+                  <div className="p-3 bg-muted rounded-lg text-sm text-muted-foreground mb-3">
+                    iPhone browsers currently can't scan QR here. Please use manual entry with customer email or mobile.
                   </div>
                 )}
                 <div className="relative rounded-lg overflow-hidden bg-muted aspect-square max-h-64 mx-auto">
@@ -374,7 +423,7 @@ const VendorScanner = () => {
                     </div>
                   )}
                 </div>
-                <Button className="w-full mt-3" variant="outline" onClick={cameraActive ? stopCamera : startCamera} disabled={barcodeSupported === false}>
+                <Button className="w-full mt-3" variant="outline" onClick={cameraActive ? stopCamera : startCamera} disabled={!cameraActive && barcodeSupported !== true}>
                   <ScanLine className="h-4 w-4 mr-2" /> {cameraActive ? 'Stop Camera' : 'Start Camera'}
                 </Button>
                 {cameraActive && (
@@ -388,13 +437,13 @@ const VendorScanner = () => {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Keyboard className="h-5 w-5" /> Manual Entry
+                  <Keyboard className="h-5 w-5" /> Manual Entry (Email / Mobile)
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Enter customer ID"
+                    placeholder="Enter customer email or mobile"
                     value={manualId}
                     onChange={(e) => setManualId(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && lookupCustomer(manualId)}
