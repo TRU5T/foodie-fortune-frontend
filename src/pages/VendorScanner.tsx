@@ -10,9 +10,18 @@ import { useVendorRewards } from "@/hooks/useVendorRewards";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ScanLine, User, Plus, Minus, Check, AlertCircle, ArrowLeft, Keyboard } from "lucide-react";
+import { ScanLine, User, Plus, Minus, Check, AlertCircle, ArrowLeft, Keyboard, Gift } from "lucide-react";
 
-type ScanState = "input" | "customer-found" | "success";
+type ScanState = "input" | "customer-found" | "select-reward" | "award" | "success";
+
+interface Reward {
+  id: string;
+  name: string;
+  description: string | null;
+  stamps_required: number;
+  points_required: number;
+  image_url: string | null;
+}
 
 interface CustomerProfile {
   id: string;
@@ -32,6 +41,7 @@ const VendorScanner = () => {
   const [selectedRestaurant, setSelectedRestaurant] = useState<string | null>(null);
   const [stampCount, setStampCount] = useState(1);
   const [cooldownError, setCooldownError] = useState(false);
+  const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [manualId, setManualId] = useState("");
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
@@ -97,6 +107,22 @@ const VendorScanner = () => {
       }
     },
     enabled: !!customer && !!activeRestaurant,
+  });
+
+  const { data: vendorRewards } = useQuery({
+    queryKey: ['vendor-rewards', activeRestaurant?.id],
+    queryFn: async () => {
+      if (!activeRestaurant) return [];
+      const { data, error } = await supabase
+        .from('rewards')
+        .select('id, name, description, stamps_required, points_required, image_url')
+        .eq('restaurant_id', activeRestaurant.id)
+        .eq('is_active', true)
+        .order('created_at', { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as Reward[];
+    },
+    enabled: !!activeRestaurant,
   });
 
   const lookupCustomer = async (rawValue: string) => {
@@ -346,6 +372,7 @@ const VendorScanner = () => {
     setCooldownError(false);
     setStampCount(1);
     setManualId("");
+    setSelectedReward(null);
     setScanState("input");
   };
 
@@ -457,7 +484,7 @@ const VendorScanner = () => {
           </div>
         )}
 
-        {/* Customer found */}
+        {/* Customer found - show reward tiles */}
         {scanState === "customer-found" && customer && (
           <div className="space-y-4">
             <Card>
@@ -501,38 +528,115 @@ const VendorScanner = () => {
                 </CardContent>
               </Card>
             ) : (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">
-                    {isStamps ? 'Add Stamps' : 'Add Points'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-center gap-4 mb-4">
-                    <Button variant="outline" size="icon" onClick={() => setStampCount(Math.max(1, stampCount - 1))} disabled={stampCount <= 1}>
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                    <div className="text-center">
-                      <span className="text-4xl font-bold">{stampCount}</span>
-                      <p className="text-sm text-muted-foreground">
-                        {isStamps ? (stampCount === 1 ? 'stamp' : 'stamps') : `$${stampCount} = ${Math.floor(stampCount * (activeRestaurant?.points_per_dollar || 1))} pts`}
+              <>
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Gift className="h-5 w-5" /> Select Reward
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {vendorRewards && vendorRewards.length > 0 ? (
+                      <div className="grid grid-cols-2 gap-3">
+                        {vendorRewards.map((reward) => (
+                          <button
+                            key={reward.id}
+                            className="p-4 rounded-lg border-2 text-left transition-all hover:shadow-md border-border hover:border-primary"
+                            onClick={() => {
+                              setSelectedReward(reward);
+                              setStampCount(1);
+                              setScanState("award");
+                            }}
+                          >
+                            <Gift className="h-6 w-6 text-primary mb-2" />
+                            <p className="font-semibold text-sm">{reward.name}</p>
+                            {reward.description && (
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{reward.description}</p>
+                            )}
+                            <p className="text-xs font-medium text-primary mt-2">
+                              {isStamps
+                                ? `${reward.stamps_required} stamps`
+                                : `${reward.points_required} points`}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        No rewards set up yet. Add rewards in your Vendor Dashboard.
                       </p>
-                    </div>
-                    <Button variant="outline" size="icon" onClick={() => setStampCount(stampCount + 1)}>
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <Button className="w-full" size="lg" onClick={() => awardLoyalty.mutate()} disabled={awardLoyalty.isPending}>
-                    <Check className="h-4 w-4 mr-2" />
-                    {awardLoyalty.isPending ? 'Awarding...' : isStamps ? `Award ${stampCount} Stamp${stampCount > 1 ? 's' : ''}` : `Award ${Math.floor(stampCount * (activeRestaurant?.points_per_dollar || 1))} Points`}
-                  </Button>
-                </CardContent>
-              </Card>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
             )}
 
             <Button variant="outline" className="w-full" onClick={resetScanner}>
               <ArrowLeft className="h-4 w-4 mr-2" /> Scan Another Customer
             </Button>
+          </div>
+        )}
+
+        {/* Award state - selected reward, add stamps/points */}
+        {scanState === "award" && customer && selectedReward && (
+          <div className="space-y-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Gift className="h-5 w-5" /> {selectedReward.name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <User className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">{customer.full_name || 'Customer'}</p>
+                    {customerBalance && (
+                      <p className="text-xs text-muted-foreground">
+                        {customerBalance.type === 'stamps'
+                          ? `${customerBalance.stamps} / ${customerBalance.total} stamps`
+                          : `${customerBalance.balance} points`}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-3 bg-muted rounded-lg mb-4 text-sm">
+                  <p>Goal: <span className="font-bold">{isStamps ? `${selectedReward.stamps_required} stamps` : `${selectedReward.points_required} points`}</span></p>
+                  {selectedReward.description && <p className="text-muted-foreground mt-1">{selectedReward.description}</p>}
+                </div>
+
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <Button variant="outline" size="icon" onClick={() => setStampCount(Math.max(1, stampCount - 1))} disabled={stampCount <= 1}>
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <div className="text-center">
+                    <span className="text-4xl font-bold">{stampCount}</span>
+                    <p className="text-sm text-muted-foreground">
+                      {isStamps ? (stampCount === 1 ? 'stamp' : 'stamps') : `$${stampCount} = ${Math.floor(stampCount * (activeRestaurant?.points_per_dollar || 1))} pts`}
+                    </p>
+                  </div>
+                  <Button variant="outline" size="icon" onClick={() => setStampCount(stampCount + 1)}>
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <Button className="w-full" size="lg" onClick={() => awardLoyalty.mutate()} disabled={awardLoyalty.isPending}>
+                  <Check className="h-4 w-4 mr-2" />
+                  {awardLoyalty.isPending ? 'Awarding...' : isStamps ? `Award ${stampCount} Stamp${stampCount > 1 ? 's' : ''}` : `Award ${Math.floor(stampCount * (activeRestaurant?.points_per_dollar || 1))} Points`}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setScanState("customer-found")}>
+                <ArrowLeft className="h-4 w-4 mr-2" /> Back to Rewards
+              </Button>
+              <Button variant="outline" className="flex-1" onClick={resetScanner}>
+                New Customer
+              </Button>
+            </div>
           </div>
         )}
 
@@ -544,6 +648,7 @@ const VendorScanner = () => {
                 <Check className="h-8 w-8 text-primary" />
               </div>
               <h2 className="text-xl font-bold mb-2">Loyalty Awarded!</h2>
+              {selectedReward && <p className="text-sm text-muted-foreground mb-1">for {selectedReward.name}</p>}
               <p className="text-muted-foreground mb-1">{customer?.full_name || 'Customer'} received</p>
               <p className="text-2xl font-bold text-primary">
                 {isStamps
