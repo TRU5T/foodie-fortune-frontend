@@ -10,6 +10,29 @@ export const useUserRole = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   
+  // Fetch ALL roles assigned to this user
+  const allRolesQuery = useQuery({
+    queryKey: ['userRoles', user?.id],
+    queryFn: async (): Promise<AppRole[]> => {
+      if (!user) return [];
+      
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.error('Error fetching user roles:', error);
+        return ['customer'];
+      }
+      
+      if (!data || data.length === 0) return ['customer'];
+      return data.map(d => d.role);
+    },
+    enabled: !!user
+  });
+
+  // Fetch the active (most recent) role
   const query = useQuery({
     queryKey: ['userRole', user?.id],
     queryFn: async (): Promise<AppRole | null> => {
@@ -46,7 +69,6 @@ export const useUserRole = () => {
         .single();
       
       if (existingRole) {
-        // Update updated_at so this role becomes the "active" one
         const { data: updated, error: updateError } = await supabase
           .from('user_roles')
           .update({ updated_at: new Date().toISOString() })
@@ -57,17 +79,8 @@ export const useUserRole = () => {
         return updated;
       }
       
-      const { data, error } = await supabase
-        .from('user_roles')
-        .insert([{ user_id: user.id, role: newRole }])
-        .select()
-        .single();
-      
-      if (error) {
-        toast({ title: "Error switching role", description: error.message, variant: "destructive" });
-        throw error;
-      }
-      return data;
+      // Should not reach here if UI only shows assigned roles
+      throw new Error('You do not have this role assigned');
     },
     onSuccess: (data) => {
       toast({ title: "Role switched", description: `Successfully switched to ${data.role} mode` });
@@ -76,10 +89,12 @@ export const useUserRole = () => {
   });
   
   const role = query.data;
+  const availableRoles = allRolesQuery.data ?? [];
   
   return {
     ...query,
     role,
+    availableRoles,
     isCustomer: role === 'customer',
     isVendor: role === 'vendor',
     isAdmin: role === 'admin',
