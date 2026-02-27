@@ -34,10 +34,23 @@ const VendorScanner = () => {
   const [cooldownError, setCooldownError] = useState(false);
   const [manualId, setManualId] = useState("");
   const [isLookingUp, setIsLookingUp] = useState(false);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [barcodeSupported, setBarcodeSupported] = useState<boolean | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const scanningRef = useRef(false);
+  const detectorRef = useRef<any>(null);
+
+  // Check BarcodeDetector support on mount
+  useEffect(() => {
+    const supported = 'BarcodeDetector' in window;
+    setBarcodeSupported(supported);
+    if (supported) {
+      // @ts-ignore
+      detectorRef.current = new BarcodeDetector({ formats: ['qr_code'] });
+    }
+  }, []);
 
   const activeRestaurant = restaurants?.find(r => r.id === (selectedRestaurant || restaurants?.[0]?.id)) || restaurants?.[0];
 
@@ -103,6 +116,10 @@ const VendorScanner = () => {
 
   // Camera-based QR scanning using BarcodeDetector API
   const startCamera = useCallback(async () => {
+    if (!barcodeSupported) {
+      toast({ title: "QR scanning not supported", description: "Your browser doesn't support BarcodeDetector. Use manual ID entry or try Chrome on Android.", variant: "destructive" });
+      return;
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
       streamRef.current = stream;
@@ -110,40 +127,42 @@ const VendorScanner = () => {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
         scanningRef.current = true;
-        scanFrame();
+        setCameraActive(true);
+        scanLoop();
       }
     } catch {
       toast({ title: "Camera unavailable", description: "Use manual ID entry instead.", variant: "destructive" });
     }
-  }, []);
+  }, [barcodeSupported]);
 
   const stopCamera = useCallback(() => {
     scanningRef.current = false;
+    setCameraActive(false);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
       streamRef.current = null;
     }
   }, []);
 
-  const scanFrame = useCallback(async () => {
-    if (!scanningRef.current || !videoRef.current || !canvasRef.current) return;
+  const scanLoop = useCallback(() => {
+    if (!scanningRef.current || !videoRef.current || !detectorRef.current) return;
 
-    if ('BarcodeDetector' in window) {
+    const tick = async () => {
+      if (!scanningRef.current || !videoRef.current) return;
       try {
-        // @ts-ignore - BarcodeDetector is not yet in TS types
-        const detector = new BarcodeDetector({ formats: ['qr_code'] });
-        const barcodes = await detector.detect(videoRef.current);
+        const barcodes = await detectorRef.current.detect(videoRef.current);
         if (barcodes.length > 0) {
+          const value = barcodes[0].rawValue;
           stopCamera();
-          lookupCustomer(barcodes[0].rawValue);
+          lookupCustomer(value);
           return;
         }
       } catch {}
-    }
-
-    if (scanningRef.current) {
-      requestAnimationFrame(scanFrame);
-    }
+      if (scanningRef.current) {
+        setTimeout(tick, 250); // scan 4x per second
+      }
+    };
+    tick();
   }, [stopCamera]);
 
   useEffect(() => {
@@ -290,16 +309,28 @@ const VendorScanner = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                {barcodeSupported === false && (
+                  <div className="p-3 bg-destructive/10 rounded-lg text-sm text-destructive mb-3">
+                    ⚠️ Your browser doesn't support QR scanning. Use <strong>Chrome on Android</strong> or try <strong>manual entry</strong> below.
+                  </div>
+                )}
                 <div className="relative rounded-lg overflow-hidden bg-muted aspect-square max-h-64 mx-auto">
                   <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
                   <canvas ref={canvasRef} className="hidden" />
+                  {cameraActive && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-48 h-48 border-2 border-primary rounded-lg animate-pulse" />
+                    </div>
+                  )}
                 </div>
-                <Button className="w-full mt-3" variant="outline" onClick={startCamera}>
-                  <ScanLine className="h-4 w-4 mr-2" /> Start Camera
+                <Button className="w-full mt-3" variant="outline" onClick={cameraActive ? stopCamera : startCamera} disabled={barcodeSupported === false}>
+                  <ScanLine className="h-4 w-4 mr-2" /> {cameraActive ? 'Stop Camera' : 'Start Camera'}
                 </Button>
-                <p className="text-xs text-muted-foreground text-center mt-2">
-                  Uses device camera to scan QR codes (requires BarcodeDetector support)
-                </p>
+                {cameraActive && (
+                  <p className="text-xs text-primary text-center mt-2 animate-pulse">
+                    📷 Scanning... Hold QR code steady in front of camera
+                  </p>
+                )}
               </CardContent>
             </Card>
 
