@@ -19,6 +19,7 @@ import BusinessSubscription from "./pages/BusinessSubscription";
 import MyStampCards from "./pages/MyStampCards";
 import Auth from "./pages/Auth";
 import VendorDashboard from "./pages/VendorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/business" element={<BusinessSubscription />} />
               <Route path="/my-stamp-cards" element={<MyStampCards />} />
               <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/auth" element={<Auth />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

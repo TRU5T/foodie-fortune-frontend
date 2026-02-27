@@ -35,9 +35,12 @@ const Index = () => {
     );
   }
 
-  // Redirect vendors to their dashboard
+  // Redirect vendors/admins to their dashboards
   if (role === 'vendor') {
     return <Navigate to="/vendor-dashboard" replace />;
+  }
+  if (role === 'admin') {
+    return <Navigate to="/admin" replace />;
   }
   // Mock data
   const featuredRestaurants = [
