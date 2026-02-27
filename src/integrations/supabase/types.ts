@@ -10,139 +10,20 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.5"
+    PostgrestVersion: "14.1"
   }
   public: {
     Tables: {
-      restaurants: {
-        Row: {
-          created_at: string
-          cuisine: string | null
-          description: string | null
-          id: string
-          logo_url: string | null
-          name: string
-          owner_id: string | null
-          points_per_dollar: number
-          stamps_required: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          cuisine?: string | null
-          description?: string | null
-          id?: string
-          logo_url?: string | null
-          name: string
-          owner_id?: string | null
-          points_per_dollar?: number
-          stamps_required?: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          cuisine?: string | null
-          description?: string | null
-          id?: string
-          logo_url?: string | null
-          name?: string
-          owner_id?: string | null
-          points_per_dollar?: number
-          stamps_required?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      rewards: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          image_url: string | null
-          is_active: boolean
-          name: string
-          points_required: number
-          restaurant_id: string
-          stamps_required: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_active?: boolean
-          name: string
-          points_required?: number
-          restaurant_id: string
-          stamps_required?: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_active?: boolean
-          name?: string
-          points_required?: number
-          restaurant_id?: string
-          stamps_required?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "rewards_restaurant_id_fkey"
-            columns: ["restaurant_id"]
-            isOneToOne: false
-            referencedRelation: "restaurants"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["user_role"]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      get_user_role: {
-        Args: { _user_id: string }
-        Returns: Database["public"]["Enums"]["user_role"]
-      }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["user_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
-      user_role: "customer" | "vendor" | "admin"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -269,8 +150,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      user_role: ["customer", "vendor", "admin"],
-    },
+    Enums: {},
   },
 } as const
