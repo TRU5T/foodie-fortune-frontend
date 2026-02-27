@@ -1,4 +1,5 @@
 
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,7 +23,7 @@ import VendorDashboard from "./pages/VendorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLanding from "./pages/AdminLanding";
 import MyQRCode from "./pages/MyQRCode";
-import VendorScanner from "./pages/VendorScanner";
+const VendorScanner = lazy(() => import("./pages/VendorScanner"));
 
 const queryClient = new QueryClient();
 
@@ -45,7 +46,7 @@ const App = () => (
               <Route path="/my-stamp-cards" element={<MyStampCards />} />
               <Route path="/my-qr-code" element={<MyQRCode />} />
               <Route path="/vendor-dashboard" element={<VendorDashboard />} />
-              <Route path="/vendor-scanner" element={<VendorScanner />} />
+              <Route path="/vendor-scanner" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}><VendorScanner /></Suspense>} />
               <Route path="/admin" element={<AdminLanding />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/auth" element={<Auth />} />
