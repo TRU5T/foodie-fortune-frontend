@@ -19,7 +19,7 @@ export const useUserRole = () => {
         .from('user_roles')
         .select('role')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+        .order('updated_at', { ascending: false })
         .limit(1)
         .single();
       
@@ -45,7 +45,17 @@ export const useUserRole = () => {
         .eq('role', newRole)
         .single();
       
-      if (existingRole) return existingRole;
+      if (existingRole) {
+        // Update updated_at so this role becomes the "active" one
+        const { data: updated, error: updateError } = await supabase
+          .from('user_roles')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('id', existingRole.id)
+          .select()
+          .single();
+        if (updateError) throw updateError;
+        return updated;
+      }
       
       const { data, error } = await supabase
         .from('user_roles')
