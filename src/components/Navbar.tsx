@@ -19,10 +19,12 @@ export const Navbar = () => {
       <Link to="/restaurants" className="font-medium hover:text-primary transition-colors">
         Restaurants
       </Link>
-      <Link to="/my-stamp-cards" className="font-medium hover:text-primary transition-colors flex items-center gap-1">
-        <Stamp className="h-4 w-4" />
-        My Stamp Cards
-      </Link>
+      {user && (
+        <Link to="/my-stamp-cards" className="font-medium hover:text-primary transition-colors flex items-center gap-1">
+          <Stamp className="h-4 w-4" />
+          My Stamp Cards
+        </Link>
+      )}
       {user && (
         <Link to="/my-qr-code" className="font-medium hover:text-primary transition-colors flex items-center gap-1">
           <QrCode className="h-4 w-4" />
