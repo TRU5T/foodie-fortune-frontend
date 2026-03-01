@@ -7,34 +7,34 @@ import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift } from "lucide
 
 export const LandingPage = () => {
   const featuredRestaurants = [
-    {
-      id: "1",
-      name: "Burger King",
-      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1965&auto=format&fit=crop",
-      cuisine: "American, Burgers",
-      rating: 4.5,
-      deliveryTime: "15-25 min",
-      pointsPerDollar: 2,
-    },
-    {
-      id: "2",
-      name: "Pizza Palace",
-      image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=2340&auto=format&fit=crop",
-      cuisine: "Italian, Pizza",
-      rating: 4.7,
-      deliveryTime: "20-30 min",
-      pointsPerDollar: 3,
-    },
-    {
-      id: "3",
-      name: "Sushi Spot",
-      image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=2340&auto=format&fit=crop",
-      cuisine: "Japanese, Sushi",
-      rating: 4.8,
-      deliveryTime: "25-35 min",
-      pointsPerDollar: 4,
-    },
-  ];
+  {
+    id: "1",
+    name: "Burger King",
+    image: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1965&auto=format&fit=crop",
+    cuisine: "American, Burgers",
+    rating: 4.5,
+    deliveryTime: "15-25 min",
+    pointsPerDollar: 2
+  },
+  {
+    id: "2",
+    name: "Pizza Palace",
+    image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=2340&auto=format&fit=crop",
+    cuisine: "Italian, Pizza",
+    rating: 4.7,
+    deliveryTime: "20-30 min",
+    pointsPerDollar: 3
+  },
+  {
+    id: "3",
+    name: "Sushi Spot",
+    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=2340&auto=format&fit=crop",
+    cuisine: "Japanese, Sushi",
+    rating: 4.8,
+    deliveryTime: "25-35 min",
+    pointsPerDollar: 4
+  }];
+
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -57,7 +57,7 @@ export const LandingPage = () => {
                   <Link to="/auth">Get Started Free</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/20 backdrop-blur-sm">
-                  <Link to="/restaurants">Browse Restaurants</Link>
+                  <Link to="/restaurants" className="text-primary">Browse Restaurants</Link>
                 </Button>
               </div>
             </div>
@@ -150,9 +150,9 @@ export const LandingPage = () => {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {featuredRestaurants.map((restaurant) => (
-                <RestaurantCard key={restaurant.id} {...restaurant} />
-              ))}
+              {featuredRestaurants.map((restaurant) =>
+              <RestaurantCard key={restaurant.id} {...restaurant} />
+              )}
             </div>
             <div className="text-center">
               <Button asChild size="lg" variant="outline">
@@ -181,6 +181,6 @@ export const LandingPage = () => {
         </section>
       </main>
       <Footer />
-    </div>
-  );
+    </div>);
+
 };
