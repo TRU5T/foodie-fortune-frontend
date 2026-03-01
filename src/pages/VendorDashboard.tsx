@@ -14,6 +14,7 @@ import { MenuItemManagement } from "@/components/vendor/MenuItemManagement";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useVendorSubscription } from "@/hooks/useVendorSubscription";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const VendorDashboard = () => {
@@ -23,6 +24,9 @@ const VendorDashboard = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("rewards");
   const queryClient = useQueryClient();
+
+  const activeRestaurantId = selectedRestaurant || restaurants?.[0]?.id;
+  const { subscription, isActive: hasActiveSubscription } = useVendorSubscription(activeRestaurantId);
 
   const requestUpgrade = useMutation({
     mutationFn: async (restaurantId: string) => {
@@ -96,6 +100,9 @@ const VendorDashboard = () => {
             <Badge variant="outline">
               {activeRestaurant.loyalty_type === 'stamps' ? '🎟️ Stamps' : '⭐ Points'}
             </Badge>
+            <Badge variant={hasActiveSubscription ? "default" : "destructive"}>
+              {hasActiveSubscription ? '✓ Subscribed' : '⚠ No Subscription'}
+            </Badge>
           </div>
         </div>
 
@@ -149,6 +156,18 @@ const VendorDashboard = () => {
                   )}
                 </CardContent>
               </Card>
+
+              {!hasActiveSubscription && (
+                <Card className="border-destructive">
+                  <CardHeader><CardTitle>Subscription Required</CardTitle></CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">Your restaurant needs an active subscription ($20/mo) to remain visible to customers.</p>
+                    <Button asChild>
+                      <Link to="/business">Subscribe Now</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
 
               {!isTier2 && (
                 <Card>
