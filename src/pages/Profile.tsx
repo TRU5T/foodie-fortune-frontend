@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
+import { sanitizeDbError } from "@/lib/sanitizeError";
 
 const Profile = () => {
   const { user, profile, signOut } = useAuth();
@@ -67,7 +68,7 @@ const Profile = () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
     onError: (error: Error) => {
-      toast({ title: "Error saving profile", description: error.message, variant: "destructive" });
+      toast({ title: "Error saving profile", description: sanitizeDbError(error), variant: "destructive" });
     },
   });
 

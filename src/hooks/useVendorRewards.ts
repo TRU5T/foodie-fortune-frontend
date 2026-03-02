@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { sanitizeDbError } from '@/lib/sanitizeError';
 import { useAuth } from '@/context/AuthContext';
 import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 
@@ -55,7 +56,7 @@ export const useVendorRewards = (restaurantId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['vendor-rewards'] });
     },
     onError: (error: Error) => {
-      toast({ title: "Error creating reward", description: error.message, variant: "destructive" });
+      toast({ title: "Error creating reward", description: sanitizeDbError(error), variant: "destructive" });
     }
   });
 
@@ -75,7 +76,7 @@ export const useVendorRewards = (restaurantId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['vendor-rewards'] });
     },
     onError: (error: Error) => {
-      toast({ title: "Error updating reward", description: error.message, variant: "destructive" });
+      toast({ title: "Error updating reward", description: sanitizeDbError(error), variant: "destructive" });
     }
   });
 
@@ -89,7 +90,7 @@ export const useVendorRewards = (restaurantId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['vendor-rewards'] });
     },
     onError: (error: Error) => {
-      toast({ title: "Error deleting reward", description: error.message, variant: "destructive" });
+      toast({ title: "Error deleting reward", description: sanitizeDbError(error), variant: "destructive" });
     }
   });
 

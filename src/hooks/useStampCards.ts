@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { sanitizeDbError } from '@/lib/sanitizeError';
 import { useAuth } from '@/context/AuthContext';
 
 export const useStampCards = () => {
@@ -16,7 +17,7 @@ export const useStampCards = () => {
         .select('*, restaurant:restaurants(*)')
         .eq('user_id', user.id);
       if (error) {
-        toast({ title: "Error fetching stamp cards", description: error.message, variant: "destructive" });
+        toast({ title: "Error fetching stamp cards", description: sanitizeDbError(error), variant: "destructive" });
         throw error;
       }
       return data;
@@ -77,7 +78,7 @@ export const useStampCards = () => {
       queryClient.invalidateQueries({ queryKey: ['stampCards'] });
     },
     onError: (error: Error) => {
-      toast({ title: "Error adding stamp", description: error.message, variant: "destructive" });
+      toast({ title: "Error adding stamp", description: sanitizeDbError(error), variant: "destructive" });
     }
   });
   

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { sanitizeDbError } from '@/lib/sanitizeError';
 import { useAuth } from '@/context/AuthContext';
 import type { Tables } from '@/integrations/supabase/types';
 
@@ -22,7 +23,7 @@ export const useUser = () => {
         .single();
       
       if (error) {
-        toast({ title: "Error fetching user data", description: error.message, variant: "destructive" });
+        toast({ title: "Error fetching user data", description: sanitizeDbError(error), variant: "destructive" });
         throw error;
       }
       
@@ -43,7 +44,7 @@ export const useUser = () => {
         .single();
       
       if (error) {
-        toast({ title: "Error updating profile", description: error.message, variant: "destructive" });
+        toast({ title: "Error updating profile", description: sanitizeDbError(error), variant: "destructive" });
         throw error;
       }
       

@@ -14,6 +14,7 @@ import { MenuItemManagement } from "@/components/vendor/MenuItemManagement";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { sanitizeDbError } from "@/lib/sanitizeError";
 import { useVendorSubscription } from "@/hooks/useVendorSubscription";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -43,7 +44,7 @@ const VendorDashboard = () => {
       toast({ title: "Upgrade requested", description: "Your tier upgrade request has been submitted for admin review." });
     },
     onError: (error: Error) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: sanitizeDbError(error), variant: "destructive" });
     }
   });
 

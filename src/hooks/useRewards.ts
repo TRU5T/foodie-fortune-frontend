@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { sanitizeDbError } from '@/lib/sanitizeError';
 import { useAuth } from '@/context/AuthContext';
 
 export const useRewards = (restaurantId?: string) => {
@@ -53,7 +54,7 @@ export const useUserRewards = () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
     onError: (error: Error) => {
-      toast({ title: "Error redeeming reward", description: error.message, variant: "destructive" });
+      toast({ title: "Error redeeming reward", description: sanitizeDbError(error), variant: "destructive" });
     }
   });
   
