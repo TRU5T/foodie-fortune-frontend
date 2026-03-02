@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useVendorRewards } from "@/hooks/useVendorRewards";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { sanitizeDbError } from "@/lib/sanitizeError";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ScanLine, User, Plus, Minus, Check, AlertCircle, ArrowLeft, Keyboard, Gift } from "lucide-react";
 
@@ -363,7 +364,7 @@ const VendorScanner = () => {
       queryClient.invalidateQueries({ queryKey: ['customer-balance'] });
     },
     onError: (error: Error) => {
-      toast({ title: "Error awarding loyalty", description: error.message, variant: "destructive" });
+      toast({ title: "Error awarding loyalty", description: sanitizeDbError(error), variant: "destructive" });
     },
   });
 

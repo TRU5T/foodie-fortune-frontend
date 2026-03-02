@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus, Edit, Trash2, Utensils } from "lucide-react";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
+import { sanitizeDbError } from "@/lib/sanitizeError";
 
 type MenuItem = Tables<'menu_items'>;
 
@@ -53,7 +54,7 @@ export const MenuItemManagement = ({ restaurantId }: MenuItemManagementProps) =>
       queryClient.invalidateQueries({ queryKey: ['menu-items', restaurantId] });
       setIsCreateOpen(false);
     },
-    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" })
+    onError: (e: Error) => toast({ title: "Error", description: sanitizeDbError(e), variant: "destructive" })
   });
 
   const updateItem = useMutation({
@@ -67,7 +68,7 @@ export const MenuItemManagement = ({ restaurantId }: MenuItemManagementProps) =>
       queryClient.invalidateQueries({ queryKey: ['menu-items', restaurantId] });
       setEditingItem(null);
     },
-    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" })
+    onError: (e: Error) => toast({ title: "Error", description: sanitizeDbError(e), variant: "destructive" })
   });
 
   const deleteItem = useMutation({
@@ -80,7 +81,7 @@ export const MenuItemManagement = ({ restaurantId }: MenuItemManagementProps) =>
       queryClient.invalidateQueries({ queryKey: ['menu-items', restaurantId] });
       setDeletingItem(null);
     },
-    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" })
+    onError: (e: Error) => toast({ title: "Error", description: sanitizeDbError(e), variant: "destructive" })
   });
 
   if (isLoading) return <div className="text-center py-8">Loading menu items...</div>;

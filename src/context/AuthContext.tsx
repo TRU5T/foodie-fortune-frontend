@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { sanitizeDbError } from '@/lib/sanitizeError';
 
 type Profile = {
   id: string;
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      toast({ title: "Error signing in", description: error.message, variant: "destructive" });
+      toast({ title: "Error signing in", description: sanitizeDbError(error), variant: "destructive" });
       throw error;
     }
     toast({ title: "Welcome back!", description: "You've been successfully signed in." });
@@ -92,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       },
     });
     if (error) {
-      toast({ title: "Error signing up", description: error.message, variant: "destructive" });
+      toast({ title: "Error signing up", description: sanitizeDbError(error), variant: "destructive" });
       throw error;
     }
     toast({ title: "Account created!", description: "You've been successfully signed up." });
@@ -101,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      toast({ title: "Error signing out", description: error.message, variant: "destructive" });
+      toast({ title: "Error signing out", description: sanitizeDbError(error), variant: "destructive" });
       throw error;
     }
     toast({ title: "Signed out", description: "You've been successfully signed out." });
@@ -112,7 +113,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     if (error) {
-      toast({ title: "Error resetting password", description: error.message, variant: "destructive" });
+      toast({ title: "Error resetting password", description: sanitizeDbError(error), variant: "destructive" });
       throw error;
     }
     toast({ title: "Password reset email sent", description: "Check your email for a password reset link." });
