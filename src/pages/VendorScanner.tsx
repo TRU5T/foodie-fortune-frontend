@@ -126,8 +126,67 @@ const VendorScanner = () => {
     enabled: !!activeRestaurant,
   });
 
+  // Check if a value looks like a signed QR token (userId:timestamp:signature)
+  const isSignedToken = (value: string): boolean => {
+    const parts = value.split(':');
+    return parts.length === 3 && parts[0].length === 36 && !isNaN(parseInt(parts[1], 10));
+  };
+
+  const lookupCustomerByToken = async (token: string) => {
+    if (!activeRestaurant) return;
+    setIsLookingUp(true);
+
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke("qr-token", {
+        body: { action: "validate", token },
+      });
+
+      if (fnError) throw fnError;
+
+      if (!data?.valid) {
+        toast({
+          title: "Invalid or expired QR code",
+          description: data?.error === "Token expired"
+            ? "Ask the customer to refresh their QR code."
+            : "QR code could not be verified. Use manual entry instead.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const profile: CustomerProfile | null = data.profile ?? null;
+      if (!profile) {
+        toast({ title: "Customer not found", description: "No profile found for this QR code.", variant: "destructive" });
+        return;
+      }
+
+      const fiveMinAgo = new Date(Date.now() - COOLDOWN_MINUTES * 60 * 1000).toISOString();
+      const { data: recentScans } = await supabase
+        .from('scan_logs')
+        .select('id')
+        .eq('customer_user_id', profile.id)
+        .eq('restaurant_id', activeRestaurant.id)
+        .gte('created_at', fiveMinAgo)
+        .limit(1);
+
+      setCooldownError(recentScans !== null && recentScans.length > 0);
+      setCustomer(profile);
+      setScanState("customer-found");
+    } catch (error) {
+      toast({ title: "QR verification failed", description: "Please try manual entry.", variant: "destructive" });
+      console.error("Token validation failed", error);
+    } finally {
+      setIsLookingUp(false);
+    }
+  };
+
   const lookupCustomer = async (rawValue: string) => {
     if (!activeRestaurant) return;
+
+    // If scanned value is a signed token, validate via edge function
+    if (isSignedToken(rawValue)) {
+      return lookupCustomerByToken(rawValue);
+    }
 
     const parsedLookup = parseLookupInput(rawValue);
     if (!parsedLookup) {

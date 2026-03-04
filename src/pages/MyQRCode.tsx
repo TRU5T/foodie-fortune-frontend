@@ -1,29 +1,50 @@
 
+import { useState, useEffect, useCallback } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { QrCode } from "lucide-react";
+import { QrCode, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const TOKEN_REFRESH_INTERVAL = 4 * 60 * 1000; // 4 minutes (tokens last 5 min)
 
 const MyQRCode = () => {
   const { user } = useAuth();
+  const [qrToken, setQrToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: profile } = useQuery({
-    queryKey: ['profile', user?.id],
-    queryFn: async () => {
-      if (!user) throw new Error('Not authenticated');
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('email, phone')
-        .eq('id', user.id)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
+  const generateToken = useCallback(async () => {
+    if (!user) return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke("qr-token", {
+        body: { action: "generate" },
+      });
+      if (fnError) throw fnError;
+      if (data?.token) {
+        setQrToken(data.token);
+      } else {
+        throw new Error("No token returned");
+      }
+    } catch (e) {
+      console.error("QR token generation failed", e);
+      setError("Could not generate QR code. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      generateToken();
+      const interval = setInterval(generateToken, TOKEN_REFRESH_INTERVAL);
+      return () => clearInterval(interval);
+    }
+  }, [user, generateToken]);
 
   if (!user) {
     return (
@@ -37,8 +58,9 @@ const MyQRCode = () => {
     );
   }
 
-  const qrLookupValue = profile?.phone?.trim() || profile?.email?.trim() || user.email?.trim() || "";
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrLookupValue)}`;
+  const qrUrl = qrToken
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrToken)}`
+    : null;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -55,18 +77,33 @@ const MyQRCode = () => {
             <p className="text-sm text-muted-foreground">
               Show this to the cashier to earn stamps or points
             </p>
-            {qrLookupValue ? (
+            {isLoading && !qrToken && (
+              <div className="w-[220px] h-[220px] flex items-center justify-center bg-muted rounded-xl">
+                <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            )}
+            {error && (
+              <div className="w-full rounded-lg border border-destructive p-4 text-sm text-destructive">
+                {error}
+                <Button variant="outline" size="sm" className="mt-2 w-full" onClick={generateToken}>
+                  Retry
+                </Button>
+              </div>
+            )}
+            {qrUrl && !error && (
               <div className="bg-white p-4 rounded-xl shadow-inner">
                 <img src={qrUrl} alt="My QR Code" width={220} height={220} />
               </div>
-            ) : (
-              <div className="w-full rounded-lg border p-4 text-sm text-muted-foreground">
-                Add an email or mobile in your profile to generate your loyalty QR code.
-              </div>
             )}
             <p className="text-xs text-muted-foreground text-center">
+              QR code refreshes automatically every few minutes for security.
+              <br />
               If camera scan fails, cashier can use your email or mobile in Manual Entry.
             </p>
+            <Button variant="ghost" size="sm" onClick={generateToken} disabled={isLoading}>
+              <RefreshCw className={`h-4 w-4 mr-1 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh QR
+            </Button>
           </CardContent>
         </Card>
       </main>
