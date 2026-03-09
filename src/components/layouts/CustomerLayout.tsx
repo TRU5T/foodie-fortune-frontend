@@ -8,6 +8,7 @@ import { RoleSwitcher } from "@/components/RoleSwitcher";
 import { useAuth } from "@/context/AuthContext";
 import { NavLink } from "@/components/NavLink";
 import { Footer } from "@/components/Footer";
+import { NotificationBell } from "@/components/NotificationBell";
 
 const CustomerNavbar = () => {
   const isMobile = useIsMobile();
