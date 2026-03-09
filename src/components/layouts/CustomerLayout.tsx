@@ -94,6 +94,7 @@ const CustomerNavbar = () => {
               ))}
             </nav>
             <div className="flex items-center gap-3">
+              {user && <NotificationBell />}
               {user && <RoleSwitcher />}
               {user ? (
                 <Button asChild size="sm">
