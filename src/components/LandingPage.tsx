@@ -37,9 +37,7 @@ export const LandingPage = () => {
 
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1">
+    <>
         {/* Hero Section */}
         <section className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-secondary/90 z-10" />
