@@ -1,8 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { RestaurantCard } from "@/components/RestaurantCard";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift } from "lucide-react";
 
 export const LandingPage = () => {
@@ -37,9 +35,7 @@ export const LandingPage = () => {
 
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1">
+    <>
         {/* Hero Section */}
         <section className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-secondary/90 z-10" />
@@ -179,8 +175,7 @@ export const LandingPage = () => {
             </div>
           </div>
         </section>
-      </main>
-      <Footer />
-    </div>);
-
+      
+    </>
+  );
 };
