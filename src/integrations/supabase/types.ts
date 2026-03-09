@@ -61,6 +61,39 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message: string
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -223,6 +256,66 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      promotions: {
+        Row: {
+          applicable_menu_item_id: string | null
+          created_at: string
+          description: string | null
+          discount_percent: number | null
+          end_date: string
+          id: string
+          is_active: boolean
+          name: string
+          promotion_type: string
+          restaurant_id: string
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          applicable_menu_item_id?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          promotion_type?: string
+          restaurant_id: string
+          start_date?: string
+          updated_at?: string
+        }
+        Update: {
+          applicable_menu_item_id?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          promotion_type?: string
+          restaurant_id?: string
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promotions_applicable_menu_item_id_fkey"
+            columns: ["applicable_menu_item_id"]
+            isOneToOne: false
+            referencedRelation: "menu_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promotions_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       restaurants: {
         Row: {

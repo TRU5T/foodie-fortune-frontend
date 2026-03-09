@@ -8,6 +8,7 @@ import { RoleSwitcher } from "@/components/RoleSwitcher";
 import { useAuth } from "@/context/AuthContext";
 import { NavLink } from "@/components/NavLink";
 import { Footer } from "@/components/Footer";
+import { NotificationBell } from "@/components/NotificationBell";
 
 const CustomerNavbar = () => {
   const isMobile = useIsMobile();
@@ -93,6 +94,7 @@ const CustomerNavbar = () => {
               ))}
             </nav>
             <div className="flex items-center gap-3">
+              {user && <NotificationBell />}
               {user && <RoleSwitcher />}
               {user ? (
                 <Button asChild size="sm">
