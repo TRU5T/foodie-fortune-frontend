@@ -127,6 +127,14 @@ const VendorDashboard = () => {
           <RewardManagement restaurantId={activeRestaurant.id} loyaltyType={activeRestaurant.loyalty_type} />
         </TabsContent>
 
+        <TabsContent value="promotions" className="mt-6">
+          <PromotionManagement restaurantId={activeRestaurant.id} />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="mt-6">
+          <VendorAnalytics restaurantId={activeRestaurant.id} />
+        </TabsContent>
+
         {isTier2 && (
           <TabsContent value="menu" className="mt-6">
             <MenuItemManagement restaurantId={activeRestaurant.id} />
