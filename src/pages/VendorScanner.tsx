@@ -1,7 +1,5 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -438,22 +436,14 @@ const VendorScanner = () => {
 
   if (isLoadingRestaurants) {
     return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-1 container py-8"><div className="text-center">Loading...</div></main>
-        <Footer />
-      </div>
+      <div className="container py-8"><div className="text-center">Loading...</div></div>
     );
   }
 
   if (!restaurants || restaurants.length === 0) {
     return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-1 container py-8">
-          <Card><CardContent className="p-6 text-center text-muted-foreground">No restaurants found.</CardContent></Card>
-        </main>
-        <Footer />
+      <div className="container py-8">
+        <Card><CardContent className="p-6 text-center text-muted-foreground">No restaurants found.</CardContent></Card>
       </div>
     );
   }
@@ -461,9 +451,7 @@ const VendorScanner = () => {
   const isStamps = activeRestaurant?.loyalty_type === 'stamps';
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1 container py-8 max-w-lg mx-auto">
+    <div className="container py-8 max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
           <ScanLine className="h-6 w-6" /> Scan Customer
         </h1>
@@ -721,8 +709,6 @@ const VendorScanner = () => {
             </CardContent>
           </Card>
         )}
-      </main>
-      <Footer />
     </div>
   );
 };

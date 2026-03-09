@@ -8,6 +8,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 
+// Layouts
+import { CustomerLayout } from "@/components/layouts/CustomerLayout";
+import { VendorLayout } from "@/components/layouts/VendorLayout";
+import { AdminLayout } from "@/components/layouts/AdminLayout";
+
 // Pages
 import Index from "./pages/Index";
 import Rewards from "./pages/Rewards";
@@ -27,6 +32,12 @@ const VendorScanner = lazy(() => import("./pages/VendorScanner"));
 
 const queryClient = new QueryClient();
 
+const SuspenseFallback = () => (
+  <div className="flex items-center justify-center min-h-[50vh]">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+  </div>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -36,20 +47,32 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/rewards" element={<Rewards />} />
-              <Route path="/restaurants" element={<Restaurants />} />
-              <Route path="/restaurant/:id" element={<RestaurantDetails />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/business" element={<BusinessSubscription />} />
-              <Route path="/my-stamp-cards" element={<MyStampCards />} />
-              <Route path="/my-qr-code" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}><MyQRCode /></Suspense>} />
-              <Route path="/vendor-dashboard" element={<VendorDashboard />} />
-              <Route path="/vendor-scanner" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}><VendorScanner /></Suspense>} />
-              <Route path="/admin" element={<AdminLanding />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/auth" element={<Auth />} />
+              {/* Customer layout routes */}
+              <Route element={<CustomerLayout />}>
+                <Route path="/" element={<Index />} />
+                <Route path="/rewards" element={<Rewards />} />
+                <Route path="/restaurants" element={<Restaurants />} />
+                <Route path="/restaurant/:id" element={<RestaurantDetails />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/my-stamp-cards" element={<MyStampCards />} />
+                <Route path="/my-qr-code" element={<Suspense fallback={<SuspenseFallback />}><MyQRCode /></Suspense>} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/business" element={<BusinessSubscription />} />
+              </Route>
+
+              {/* Vendor layout routes */}
+              <Route element={<VendorLayout />}>
+                <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+                <Route path="/vendor-scanner" element={<Suspense fallback={<SuspenseFallback />}><VendorScanner /></Suspense>} />
+              </Route>
+
+              {/* Admin layout routes */}
+              <Route element={<AdminLayout />}>
+                <Route path="/admin" element={<AdminLanding />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              </Route>
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
