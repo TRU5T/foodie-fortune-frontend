@@ -9,6 +9,8 @@ import { useVendorRewards } from "@/hooks/useVendorRewards";
 import { RewardManagement } from "@/components/vendor/RewardManagement";
 import { CreateRewardDialog } from "@/components/vendor/CreateRewardDialog";
 import { MenuItemManagement } from "@/components/vendor/MenuItemManagement";
+import { PromotionManagement } from "@/components/vendor/PromotionManagement";
+import { VendorAnalytics } from "@/components/vendor/VendorAnalytics";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
