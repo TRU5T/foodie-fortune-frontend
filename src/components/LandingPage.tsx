@@ -175,7 +175,7 @@ export const LandingPage = () => {
             </div>
           </div>
         </section>
-      </main>
+      
     </>
   );
 };
