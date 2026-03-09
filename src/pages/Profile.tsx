@@ -1,7 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { PointsSummary } from "@/components/PointsSummary";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,7 +35,6 @@ const Profile = () => {
     navigate('/');
   };
 
-  // Fetch real orders
   const { data: orders = [] } = useQuery({
     queryKey: ['my-orders', user?.id],
     queryFn: async () => {
@@ -74,146 +71,127 @@ const Profile = () => {
 
   if (!user) {
     return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-1 container py-8 flex items-center justify-center">
-          <p className="text-muted-foreground">Please sign in to view your profile.</p>
-        </main>
-        <Footer />
+      <div className="container py-8 flex items-center justify-center min-h-[50vh]">
+        <p className="text-muted-foreground">Please sign in to view your profile.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1 container py-8">
-        <h1 className="text-3xl font-bold mb-8">My Profile</h1>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
-          <div className="lg:col-span-1">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <User className="h-12 w-12 text-primary" />
-                  </div>
-                  <h2 className="text-xl font-bold">{profile?.full_name || 'User'}</h2>
-                  <p className="text-muted-foreground">{profile?.email || user.email}</p>
-                  
-                  <Separator className="my-4" />
-                  
-                  <PointsSummary 
-                    points={profile?.total_points || 0} 
-                    level={profile?.loyalty_level || 'Bronze'} 
-                    nextLevelPoints={500} 
-                    lifetimePoints={profile?.total_points || 0}
-                  />
-                  
-                  <Separator className="my-6" />
-                  
-                  <Button variant="outline" className="w-full justify-start mt-2 text-destructive" onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
-                  </Button>
+    <div className="container py-8">
+      <h1 className="text-3xl font-bold mb-8">My Profile</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
+        <div className="lg:col-span-1">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <User className="h-12 w-12 text-primary" />
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="lg:col-span-3">
-            <Tabs defaultValue="account">
-              <TabsList className="mb-6">
-                <TabsTrigger value="account">Account Details</TabsTrigger>
-                <TabsTrigger value="orders">Order History</TabsTrigger>
-              </TabsList>
+                <h2 className="text-xl font-bold">{profile?.full_name || 'User'}</h2>
+                <p className="text-muted-foreground">{profile?.email || user.email}</p>
+                
+                <Separator className="my-4" />
+                
+                <PointsSummary 
+                  points={profile?.total_points || 0} 
+                  level={profile?.loyalty_level || 'Bronze'} 
+                  nextLevelPoints={500} 
+                  lifetimePoints={profile?.total_points || 0}
+                />
+                
+                <Separator className="my-6" />
+                
+                <Button variant="outline" className="w-full justify-start mt-2 text-destructive" onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="lg:col-span-3">
+          <Tabs defaultValue="account">
+            <TabsList className="mb-6">
+              <TabsTrigger value="account">Account Details</TabsTrigger>
+              <TabsTrigger value="orders">Order History</TabsTrigger>
+            </TabsList>
 
-              <TabsContent value="account">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <User className="mr-2 h-5 w-5" />
-                      Personal Information
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); updateProfile.mutate(); }}>
-                      <div className="space-y-2">
-                        <Label htmlFor="fullName">Full Name</Label>
-                        <Input
-                          id="fullName"
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          placeholder="Enter your full name"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" value={profile?.email || user.email || ''} disabled />
-                        <p className="text-xs text-muted-foreground">Email cannot be changed here.</p>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
-                          id="phone"
-                          type="tel"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="Enter your phone number"
-                        />
-                      </div>
-                      <Button type="submit" disabled={updateProfile.isPending}>
-                        {updateProfile.isPending ? 'Saving...' : 'Save Changes'}
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="orders">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Receipt className="mr-2 h-5 w-5" />
-                      Recent Orders
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {orders.length === 0 ? (
-                      <div className="text-center py-6">
-                        <p className="text-muted-foreground">You haven't placed any orders yet.</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {orders.map((order: any) => (
-                          <Card key={order.id}>
-                            <CardContent className="p-4">
-                              <div className="flex justify-between mb-2">
-                                <div>
-                                  <h3 className="font-medium">{order.restaurant?.name || 'Restaurant'}</h3>
-                                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <Clock className="h-3 w-3" />
-                                    <span>{new Date(order.created_at).toLocaleDateString()}</span>
-                                  </div>
-                                </div>
-                                <div className="text-right">
-                                  <p className="font-medium">${Number(order.total_amount).toFixed(2)}</p>
-                                  <span className="text-xs px-2 py-1 bg-muted rounded capitalize">{order.status}</span>
+            <TabsContent value="account">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <User className="mr-2 h-5 w-5" />
+                    Personal Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); updateProfile.mutate(); }}>
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName">Full Name</Label>
+                      <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Enter your full name" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input id="email" type="email" value={profile?.email || user.email || ''} disabled />
+                      <p className="text-xs text-muted-foreground">Email cannot be changed here.</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter your phone number" />
+                    </div>
+                    <Button type="submit" disabled={updateProfile.isPending}>
+                      {updateProfile.isPending ? 'Saving...' : 'Save Changes'}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="orders">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Receipt className="mr-2 h-5 w-5" />
+                    Recent Orders
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {orders.length === 0 ? (
+                    <div className="text-center py-6">
+                      <p className="text-muted-foreground">You haven't placed any orders yet.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {orders.map((order: any) => (
+                        <Card key={order.id}>
+                          <CardContent className="p-4">
+                            <div className="flex justify-between mb-2">
+                              <div>
+                                <h3 className="font-medium">{order.restaurant?.name || 'Restaurant'}</h3>
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Clock className="h-3 w-3" />
+                                  <span>{new Date(order.created_at).toLocaleDateString()}</span>
                                 </div>
                               </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
+                              <div className="text-right">
+                                <p className="font-medium">${Number(order.total_amount).toFixed(2)}</p>
+                                <span className="text-xs px-2 py-1 bg-muted rounded capitalize">{order.status}</span>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
-      </main>
-      <Footer />
+      </div>
     </div>
   );
 };
