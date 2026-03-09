@@ -112,6 +112,8 @@ const VendorDashboard = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList>
           <TabsTrigger value="rewards">Rewards</TabsTrigger>
+          <TabsTrigger value="promotions">Promotions</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
           {isTier2 && <TabsTrigger value="menu">Menu Items</TabsTrigger>}
           <TabsTrigger value="settings">Store Settings</TabsTrigger>
         </TabsList>
