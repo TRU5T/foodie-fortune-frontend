@@ -47,6 +47,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <PushNotificationInit />
             <Routes>
               {/* Customer layout routes */}
               <Route element={<CustomerLayout />}>
