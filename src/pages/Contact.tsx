@@ -107,7 +107,7 @@ const Contact = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="message">Message</Label>
-              <Textarea id="message" placeholder="Tell us more..." rows={5} required />
+              <Textarea id="message" name="message" placeholder="Tell us more..." rows={5} required />
             </div>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Sending…" : "Send Message"}
