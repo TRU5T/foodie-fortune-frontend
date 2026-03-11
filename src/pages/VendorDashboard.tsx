@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Store, ArrowUpCircle, ScanLine } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { useVendorRewards } from "@/hooks/useVendorRewards";
 import { RewardManagement } from "@/components/vendor/RewardManagement";
 import { CreateRewardDialog } from "@/components/vendor/CreateRewardDialog";
@@ -28,6 +30,20 @@ const VendorDashboard = () => {
 
   const activeRestaurantId = selectedRestaurant || restaurants?.[0]?.id;
   const { subscription, isActive: hasActiveSubscription } = useVendorSubscription(activeRestaurantId);
+
+  const toggleOnlineOrdering = useMutation({
+    mutationFn: async ({ restaurantId, enabled }: { restaurantId: string; enabled: boolean }) => {
+      const { error } = await supabase.from('restaurants').update({ offers_online_ordering: enabled }).eq('id', restaurantId);
+      if (error) throw error;
+    },
+    onSuccess: (_, { enabled }) => {
+      toast({ title: enabled ? "Online ordering enabled" : "Online ordering disabled" });
+      queryClient.invalidateQueries({ queryKey: ['vendor-restaurants'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: sanitizeDbError(error), variant: "destructive" });
+    }
+  });
 
   const requestUpgrade = useMutation({
     mutationFn: async (restaurantId: string) => {
@@ -158,6 +174,23 @@ const VendorDashboard = () => {
               </CardContent>
             </Card>
 
+            <Card>
+              <CardHeader><CardTitle>Online Ordering</CardTitle></CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <Label htmlFor="online-ordering">Enable online ordering</Label>
+                    <p className="text-sm text-muted-foreground">Allow customers to place orders through the app</p>
+                  </div>
+                  <Switch
+                    id="online-ordering"
+                    checked={activeRestaurant.offers_online_ordering}
+                    onCheckedChange={(checked) => toggleOnlineOrdering.mutate({ restaurantId: activeRestaurant.id, enabled: checked })}
+                    disabled={toggleOnlineOrdering.isPending}
+                  />
+                </div>
+              </CardContent>
+            </Card>
             {!hasActiveSubscription && (
               <Card className="border-destructive">
                 <CardHeader><CardTitle>Subscription Required</CardTitle></CardHeader>
