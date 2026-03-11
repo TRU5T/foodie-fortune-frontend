@@ -166,11 +166,11 @@ export const LandingPage = () => {
             Join our community of food lovers and start collecting rewards with every meal today!
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-              <Link to="/auth" className="text-primary-foreground bg-primary">Sign Up Now</Link>
+            <Button asChild size="lg">
+              <Link to="/auth">Sign Up Now</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/20 backdrop-blur-sm">
-              <Link to="/auth" className="bg-primary">Sign In</Link>
+            <Button asChild size="lg">
+              <Link to="/auth">Sign In</Link>
             </Button>
           </div>
         </div>
