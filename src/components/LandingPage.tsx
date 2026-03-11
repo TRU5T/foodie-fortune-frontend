@@ -50,7 +50,7 @@ export const LandingPage = () => {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button asChild size="lg">
-                <Link to="/auth">Get Started Free</Link>
+                <Link to="/auth?tab=register">Get Started Free</Link>
               </Button>
               <Button asChild size="lg">
                 <Link to="/restaurants">Browse Restaurants</Link>
