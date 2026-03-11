@@ -26,6 +26,7 @@ export const RestaurantCard = ({
   deliveryTime,
   pointsPerDollar,
   stampsAvailable = false,
+  offersOnlineOrdering = false,
 }: RestaurantCardProps) => {
   return (
     <Card className="food-card">
