@@ -49,11 +49,11 @@ export const LandingPage = () => {
               Your favorite restaurants, all in one place. Order food, collect stamps, earn points with every purchase, and unlock exclusive rewards. Join thousands of food lovers today!
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-                <Link to="/auth" className="text-primary-foreground bg-primary">Get Started Free</Link>
+              <Button asChild size="lg">
+                <Link to="/auth">Get Started Free</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/20 backdrop-blur-sm">
-                <Link to="/restaurants" className="text-primary-foreground bg-primary">Browse Restaurants</Link>
+              <Button asChild size="lg">
+                <Link to="/restaurants">Browse Restaurants</Link>
               </Button>
             </div>
           </div>
@@ -151,7 +151,7 @@ export const LandingPage = () => {
             )}
           </div>
           <div className="text-center">
-            <Button asChild size="lg" variant="outline">
+            <Button asChild size="lg">
               <Link to="/restaurants">View All Restaurants</Link>
             </Button>
           </div>
@@ -166,11 +166,11 @@ export const LandingPage = () => {
             Join our community of food lovers and start collecting rewards with every meal today!
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-              <Link to="/auth" className="text-primary-foreground bg-primary">Sign Up Now</Link>
+            <Button asChild size="lg">
+              <Link to="/auth">Sign Up Now</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/20 backdrop-blur-sm">
-              <Link to="/auth" className="bg-primary">Sign In</Link>
+            <Button asChild size="lg">
+              <Link to="/auth">Sign In</Link>
             </Button>
           </div>
         </div>
