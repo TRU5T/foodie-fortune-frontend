@@ -31,6 +31,20 @@ const VendorDashboard = () => {
   const activeRestaurantId = selectedRestaurant || restaurants?.[0]?.id;
   const { subscription, isActive: hasActiveSubscription } = useVendorSubscription(activeRestaurantId);
 
+  const toggleOnlineOrdering = useMutation({
+    mutationFn: async ({ restaurantId, enabled }: { restaurantId: string; enabled: boolean }) => {
+      const { error } = await supabase.from('restaurants').update({ offers_online_ordering: enabled }).eq('id', restaurantId);
+      if (error) throw error;
+    },
+    onSuccess: (_, { enabled }) => {
+      toast({ title: enabled ? "Online ordering enabled" : "Online ordering disabled" });
+      queryClient.invalidateQueries({ queryKey: ['vendor-restaurants'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: sanitizeDbError(error), variant: "destructive" });
+    }
+  });
+
   const requestUpgrade = useMutation({
     mutationFn: async (restaurantId: string) => {
       if (!user) throw new Error('Not authenticated');
