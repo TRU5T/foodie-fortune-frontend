@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Store, ArrowUpCircle, ScanLine } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { useVendorRewards } from "@/hooks/useVendorRewards";
 import { RewardManagement } from "@/components/vendor/RewardManagement";
 import { CreateRewardDialog } from "@/components/vendor/CreateRewardDialog";
