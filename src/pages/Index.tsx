@@ -4,13 +4,16 @@ import { RestaurantCard } from "@/components/RestaurantCard";
 import { RewardCard } from "@/components/RewardCard";
 import { PointsSummary } from "@/components/PointsSummary";
 import { LandingPage } from "@/components/LandingPage";
+import { WalletStampCards } from "@/components/WalletStampCards";
 import { useAuth } from "@/context/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ArrowRight, UtensilsCrossed, Trophy, Clock } from "lucide-react";
 
 const Index = () => {
   const { user, isLoading } = useAuth();
   const { role, isLoading: isLoadingRole } = useUserRole();
+  const isMobile = useIsMobile();
 
   // Show landing page for non-authenticated users
   if (!isLoading && !user) {
@@ -35,6 +38,11 @@ const Index = () => {
   }
   if (role === 'admin') {
     return <Navigate to="/admin" replace />;
+  }
+
+  // Show wallet-style stamp cards on mobile for customers
+  if (isMobile && role === 'customer') {
+    return <WalletStampCards />;
   }
 
   // Mock data
