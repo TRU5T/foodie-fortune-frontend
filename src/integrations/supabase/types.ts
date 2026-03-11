@@ -357,6 +357,7 @@ export type Database = {
           logo_url: string | null
           loyalty_type: Database["public"]["Enums"]["loyalty_type"]
           name: string
+          offers_online_ordering: boolean
           owner_id: string
           points_per_dollar: number
           stamps_required: number
@@ -375,6 +376,7 @@ export type Database = {
           logo_url?: string | null
           loyalty_type?: Database["public"]["Enums"]["loyalty_type"]
           name: string
+          offers_online_ordering?: boolean
           owner_id: string
           points_per_dollar?: number
           stamps_required?: number
@@ -393,6 +395,7 @@ export type Database = {
           logo_url?: string | null
           loyalty_type?: Database["public"]["Enums"]["loyalty_type"]
           name?: string
+          offers_online_ordering?: boolean
           owner_id?: string
           points_per_dollar?: number
           stamps_required?: number

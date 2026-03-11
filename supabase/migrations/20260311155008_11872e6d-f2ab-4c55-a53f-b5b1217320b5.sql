@@ -1,0 +1,1 @@
+ALTER TABLE public.restaurants ADD COLUMN offers_online_ordering boolean NOT NULL DEFAULT false;
