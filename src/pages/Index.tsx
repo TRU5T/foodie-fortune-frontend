@@ -13,6 +13,7 @@ import { ArrowRight, UtensilsCrossed, Trophy, Clock } from "lucide-react";
 const Index = () => {
   const { user, isLoading } = useAuth();
   const { role, isLoading: isLoadingRole } = useUserRole();
+  const isMobile = useIsMobile();
 
   // Show landing page for non-authenticated users
   if (!isLoading && !user) {
