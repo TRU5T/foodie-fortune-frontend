@@ -158,6 +158,8 @@ const Restaurants = () => {
                 deliveryTime=""
                 pointsPerDollar={restaurant.points_per_dollar}
                 stampsAvailable={restaurant.loyalty_type === "stamps"}
+                offersOnlineOrdering={restaurant.offers_online_ordering}
+              />
               />
             ))}
           </div>
