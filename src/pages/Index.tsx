@@ -40,6 +40,11 @@ const Index = () => {
     return <Navigate to="/admin" replace />;
   }
 
+  // Show wallet-style stamp cards on mobile for customers
+  if (isMobile && role === 'customer') {
+    return <WalletStampCards />;
+  }
+
   // Mock data
   const featuredRestaurants = [
     {
