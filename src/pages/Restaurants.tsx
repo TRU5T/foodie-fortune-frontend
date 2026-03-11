@@ -134,6 +134,7 @@ const Restaurants = () => {
               onClick={() => {
                 setSearchQuery("");
                 setCuisineFilter("all");
+                setAddressQuery("");
               }}
             >
               Clear Filters
