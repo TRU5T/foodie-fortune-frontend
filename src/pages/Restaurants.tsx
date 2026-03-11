@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { RestaurantCard } from "@/components/RestaurantCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,13 +8,18 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, MapPin, Loader2 } from "lucide-react";
 import { useRestaurants } from "@/hooks/useRestaurants";
+import { usePlacesAutocomplete } from "@/hooks/usePlacesAutocomplete";
 
 const Restaurants = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [cuisineFilter, setCuisineFilter] = useState("all");
   const [addressQuery, setAddressQuery] = useState("");
+  const [addressInput, setAddressInput] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const addressWrapperRef = useRef<HTMLDivElement>(null);
   
   const { data: restaurants, isLoading } = useRestaurants();
+  const { predictions, isLoading: placesLoading } = usePlacesAutocomplete(addressInput);
   
   const filteredRestaurants = useMemo(() => {
     if (!restaurants) return [];
@@ -36,6 +41,12 @@ const Restaurants = () => {
     return [...new Set(allCuisines)];
   }, [restaurants]);
 
+  const handleSelectAddress = (description: string) => {
+    setAddressInput(description);
+    setAddressQuery(description);
+    setShowSuggestions(false);
+  };
+
   return (
     <>
       <div className="bg-primary text-primary-foreground py-12">
@@ -53,14 +64,41 @@ const Restaurants = () => {
                     className="pl-10"
                   />
                 </div>
-                <div className="relative md:col-span-3">
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <div className="relative md:col-span-3" ref={addressWrapperRef}>
+                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
                   <Input
-                    placeholder="Filter by city or address..."
-                    value={addressQuery}
-                    onChange={(e) => setAddressQuery(e.target.value)}
+                    placeholder="Search by address..."
+                    value={addressInput}
+                    onChange={(e) => {
+                      setAddressInput(e.target.value);
+                      setShowSuggestions(true);
+                      if (!e.target.value) setAddressQuery("");
+                    }}
+                    onFocus={() => predictions.length > 0 && setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                     className="pl-10"
                   />
+                  {showSuggestions && predictions.length > 0 && (
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                      {predictions.map((prediction) => (
+                        <button
+                          key={prediction.place_id}
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+                          onMouseDown={() => handleSelectAddress(prediction.description)}
+                        >
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-3 w-3 text-muted-foreground shrink-0" />
+                            <span>{prediction.description}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {placesLoading && showSuggestions && (
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-md shadow-lg p-3 flex justify-center">
+                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    </div>
+                  )}
                 </div>
                 <div className="md:col-span-2">
                   <Select value={cuisineFilter} onValueChange={setCuisineFilter}>
@@ -135,6 +173,7 @@ const Restaurants = () => {
                 setSearchQuery("");
                 setCuisineFilter("all");
                 setAddressQuery("");
+                setAddressInput("");
               }}
             >
               Clear Filters
