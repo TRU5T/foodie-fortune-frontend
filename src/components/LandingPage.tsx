@@ -151,7 +151,7 @@ export const LandingPage = () => {
             )}
           </div>
           <div className="text-center">
-            <Button asChild size="lg" variant="outline">
+            <Button asChild size="lg">
               <Link to="/restaurants">View All Restaurants</Link>
             </Button>
           </div>
