@@ -26,7 +26,9 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const Auth = () => {
-  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") === "register" ? "register" : "login";
+  const [activeTab, setActiveTab] = useState<"login" | "register">(defaultTab);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
