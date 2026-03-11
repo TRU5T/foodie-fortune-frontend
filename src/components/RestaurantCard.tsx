@@ -47,7 +47,7 @@ export const RestaurantCard = ({
             </Badge>
           )}
           {offersOnlineOrdering && (
-            <Badge className="bg-green-600 text-white flex gap-1 items-center">
+            <Badge className="bg-secondary text-secondary-foreground flex gap-1 items-center">
               <ShoppingBag className="h-3 w-3" />
               Order Online
             </Badge>
