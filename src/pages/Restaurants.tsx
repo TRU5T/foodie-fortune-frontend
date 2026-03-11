@@ -56,7 +56,9 @@ const Restaurants = () => {
                 <div className="relative md:col-span-3">
                   <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Delivery address"
+                    placeholder="Filter by city or address..."
+                    value={addressQuery}
+                    onChange={(e) => setAddressQuery(e.target.value)}
                     className="pl-10"
                   />
                 </div>
