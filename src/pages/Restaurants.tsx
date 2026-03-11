@@ -173,6 +173,7 @@ const Restaurants = () => {
                 setSearchQuery("");
                 setCuisineFilter("all");
                 setAddressQuery("");
+                setAddressInput("");
               }}
             >
               Clear Filters
