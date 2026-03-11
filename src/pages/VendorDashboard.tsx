@@ -174,6 +174,23 @@ const VendorDashboard = () => {
               </CardContent>
             </Card>
 
+            <Card>
+              <CardHeader><CardTitle>Online Ordering</CardTitle></CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <Label htmlFor="online-ordering">Enable online ordering</Label>
+                    <p className="text-sm text-muted-foreground">Allow customers to place orders through the app</p>
+                  </div>
+                  <Switch
+                    id="online-ordering"
+                    checked={activeRestaurant.offers_online_ordering}
+                    onCheckedChange={(checked) => toggleOnlineOrdering.mutate({ restaurantId: activeRestaurant.id, enabled: checked })}
+                    disabled={toggleOnlineOrdering.isPending}
+                  />
+                </div>
+              </CardContent>
+            </Card>
             {!hasActiveSubscription && (
               <Card className="border-destructive">
                 <CardHeader><CardTitle>Subscription Required</CardTitle></CardHeader>
