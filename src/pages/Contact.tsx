@@ -103,7 +103,7 @@ const Contact = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="subject">Subject</Label>
-              <Input id="subject" placeholder="How can we help?" required />
+              <Input id="subject" name="subject" placeholder="How can we help?" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="message">Message</Label>
