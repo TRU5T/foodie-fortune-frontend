@@ -95,19 +95,33 @@ const Restaurants = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="recommended">Recommended</SelectItem>
-                <SelectItem value="rating">Highest Rating</SelectItem>
-                <SelectItem value="time">Fastest Delivery</SelectItem>
                 <SelectItem value="points">Most Points</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRestaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.id} {...restaurant} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredRestaurants.map((restaurant) => (
+              <RestaurantCard
+                key={restaurant.id}
+                id={restaurant.id}
+                name={restaurant.name}
+                image={restaurant.cover_image_url || "/placeholder.svg"}
+                cuisine={restaurant.cuisine || ""}
+                rating={0}
+                deliveryTime=""
+                pointsPerDollar={restaurant.points_per_dollar}
+                stampsAvailable={restaurant.loyalty_type === "stamps"}
+              />
+            ))}
+          </div>
+        )}
         
         {filteredRestaurants.length === 0 && (
           <div className="text-center py-12">
