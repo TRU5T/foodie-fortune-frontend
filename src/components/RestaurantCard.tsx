@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Clock, Star, Award } from "lucide-react";
+import { Clock, Star, Award, ShoppingBag } from "lucide-react";
 
 interface RestaurantCardProps {
   id: string;
