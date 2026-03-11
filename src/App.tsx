@@ -28,6 +28,10 @@ import Auth from "./pages/Auth";
 import VendorDashboard from "./pages/VendorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLanding from "./pages/AdminLanding";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 const MyQRCode = lazy(() => import("./pages/MyQRCode"));
 const VendorScanner = lazy(() => import("./pages/VendorScanner"));
 
