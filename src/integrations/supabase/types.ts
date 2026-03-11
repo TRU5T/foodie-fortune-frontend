@@ -346,6 +346,8 @@ export type Database = {
       }
       restaurants: {
         Row: {
+          address: string | null
+          city: string | null
           cover_image_url: string | null
           created_at: string
           cuisine: string | null
@@ -362,6 +364,8 @@ export type Database = {
           vendor_tier: Database["public"]["Enums"]["vendor_tier"]
         }
         Insert: {
+          address?: string | null
+          city?: string | null
           cover_image_url?: string | null
           created_at?: string
           cuisine?: string | null
@@ -378,6 +382,8 @@ export type Database = {
           vendor_tier?: Database["public"]["Enums"]["vendor_tier"]
         }
         Update: {
+          address?: string | null
+          city?: string | null
           cover_image_url?: string | null
           created_at?: string
           cuisine?: string | null
