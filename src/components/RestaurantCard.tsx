@@ -14,6 +14,7 @@ interface RestaurantCardProps {
   deliveryTime: string;
   pointsPerDollar: number;
   stampsAvailable?: boolean;
+  offersOnlineOrdering?: boolean;
 }
 
 export const RestaurantCard = ({
