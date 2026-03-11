@@ -28,6 +28,10 @@ import Auth from "./pages/Auth";
 import VendorDashboard from "./pages/VendorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLanding from "./pages/AdminLanding";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 const MyQRCode = lazy(() => import("./pages/MyQRCode"));
 const VendorScanner = lazy(() => import("./pages/VendorScanner"));
 
@@ -61,6 +65,10 @@ const App = () => (
                 <Route path="/my-qr-code" element={<Suspense fallback={<SuspenseFallback />}><MyQRCode /></Suspense>} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/business" element={<BusinessSubscription />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
               </Route>
 
               {/* Vendor layout routes */}
