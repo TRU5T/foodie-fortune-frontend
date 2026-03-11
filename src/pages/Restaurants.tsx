@@ -160,7 +160,6 @@ const Restaurants = () => {
                 stampsAvailable={restaurant.loyalty_type === "stamps"}
                 offersOnlineOrdering={restaurant.offers_online_ordering}
               />
-              />
             ))}
           </div>
         )}
