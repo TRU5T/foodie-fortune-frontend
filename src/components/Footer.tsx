@@ -82,8 +82,8 @@ export const Footer = () => {
             <address className="not-italic text-sm text-muted-foreground">
               <p>123 Foodie Street</p>
               <p>Tasty City, TC 12345</p>
-              <p className="mt-2">support@foodierewards.com</p>
-              <p>(123) 456-7890</p>
+              <p className="mt-2">support@redeemr.app</p>
+              
             </address>
           </div>
         </div>
@@ -92,6 +92,6 @@ export const Footer = () => {
           <p>© {new Date().getFullYear()} Redeemr. All rights reserved.</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>);
+
 };
