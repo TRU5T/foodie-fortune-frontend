@@ -80,7 +80,7 @@ export const Footer = () => {
           <div>
             <h4 className="font-medium mb-4">Contact</h4>
             <address className="not-italic text-sm text-muted-foreground">
-              <p>123 Foodie Street</p>
+              
               <p>Tasty City, TC 12345</p>
               <p className="mt-2">support@redeemr.app</p>
               
