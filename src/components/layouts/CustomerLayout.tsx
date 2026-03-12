@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { ShoppingCart, User, Menu, Stamp, QrCode, Award, UtensilsCrossed, Home } from "lucide-react";
