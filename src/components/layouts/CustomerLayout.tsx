@@ -56,6 +56,7 @@ const CustomerNavbar = () => {
                       end={link.end}
                       className="flex items-center gap-2 px-3 py-2 rounded-md text-foreground hover:bg-muted transition-colors"
                       activeClassName="bg-primary/10 text-primary font-semibold"
+                      onClick={() => setSheetOpen(false)}
                     >
                       <link.icon className="h-4 w-4" />
                       {link.label}

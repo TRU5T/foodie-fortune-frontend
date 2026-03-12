@@ -19,6 +19,7 @@ export const NavLink = ({ to, end = false, className, activeClassName, children,
   return (
     <Link
       to={to}
+      onClick={onClick}
       className={cn(className, isActive && (activeClassName ?? "text-primary font-semibold"))}
     >
       {children}

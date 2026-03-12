@@ -27,7 +27,7 @@ const vendorLinks = [
 ];
 
 function VendorSidebar() {
-  const { state } = useSidebar();
+  const { state, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const { signOut } = useAuth();
   const navigate = useNavigate();
@@ -35,6 +35,10 @@ function VendorSidebar() {
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  const handleNavClick = () => {
+    setOpenMobile(false);
   };
 
   return (
@@ -57,6 +61,7 @@ function VendorSidebar() {
                       end
                       className="flex items-center gap-2 hover:bg-sidebar-accent/50 rounded-md px-2 py-1.5 text-sidebar-foreground"
                       activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      onClick={handleNavClick}
                     >
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
