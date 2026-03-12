@@ -14,6 +14,7 @@ import { NotificationBell } from "@/components/NotificationBell";
 const CustomerNavbar = () => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const links = [
     { to: "/", label: "Home", icon: Home, end: true },
