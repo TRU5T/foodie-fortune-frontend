@@ -41,7 +41,7 @@ const CustomerNavbar = () => {
         {isMobile ? (
           <div className="flex items-center gap-2">
             {user && <RoleSwitcher />}
-            <Sheet>
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Menu className="h-5 w-5" />
