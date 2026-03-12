@@ -64,14 +64,14 @@ const CustomerNavbar = () => {
                   ))}
                   <div className="border-t pt-4 mt-2">
                     {user ? (
-                      <Button asChild className="w-full">
+                      <Button asChild className="w-full" onClick={() => setSheetOpen(false)}>
                         <Link to="/profile">
                           <User className="mr-2 h-4 w-4" />
                           Profile
                         </Link>
                       </Button>
                     ) : (
-                      <Button asChild className="w-full">
+                      <Button asChild className="w-full" onClick={() => setSheetOpen(false)}>
                         <Link to="/auth">Sign In</Link>
                       </Button>
                     )}
