@@ -7,9 +7,10 @@ interface NavLinkProps {
   className?: string;
   activeClassName?: string;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
-export const NavLink = ({ to, end = false, className, activeClassName, children }: NavLinkProps) => {
+export const NavLink = ({ to, end = false, className, activeClassName, children, onClick }: NavLinkProps) => {
   const location = useLocation();
   const isActive = end
     ? location.pathname === to
@@ -18,6 +19,7 @@ export const NavLink = ({ to, end = false, className, activeClassName, children 
   return (
     <Link
       to={to}
+      onClick={onClick}
       className={cn(className, isActive && (activeClassName ?? "text-primary font-semibold"))}
     >
       {children}

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { ShoppingCart, User, Menu, Stamp, QrCode, Award, UtensilsCrossed, Home } from "lucide-react";
@@ -13,6 +14,7 @@ import { NotificationBell } from "@/components/NotificationBell";
 const CustomerNavbar = () => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const links = [
     { to: "/", label: "Home", icon: Home, end: true },
@@ -39,7 +41,7 @@ const CustomerNavbar = () => {
         {isMobile ? (
           <div className="flex items-center gap-2">
             {user && <RoleSwitcher />}
-            <Sheet>
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Menu className="h-5 w-5" />
@@ -54,6 +56,7 @@ const CustomerNavbar = () => {
                       end={link.end}
                       className="flex items-center gap-2 px-3 py-2 rounded-md text-foreground hover:bg-muted transition-colors"
                       activeClassName="bg-primary/10 text-primary font-semibold"
+                      onClick={() => setSheetOpen(false)}
                     >
                       <link.icon className="h-4 w-4" />
                       {link.label}
@@ -61,14 +64,14 @@ const CustomerNavbar = () => {
                   ))}
                   <div className="border-t pt-4 mt-2">
                     {user ? (
-                      <Button asChild className="w-full">
+                      <Button asChild className="w-full" onClick={() => setSheetOpen(false)}>
                         <Link to="/profile">
                           <User className="mr-2 h-4 w-4" />
                           Profile
                         </Link>
                       </Button>
                     ) : (
-                      <Button asChild className="w-full">
+                      <Button asChild className="w-full" onClick={() => setSheetOpen(false)}>
                         <Link to="/auth">Sign In</Link>
                       </Button>
                     )}
