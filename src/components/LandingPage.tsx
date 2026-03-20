@@ -37,7 +37,7 @@ export const LandingPage = () => {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">How It Works</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Three simple steps to start earning rewards with every meal
+              Three simple steps to start earning rewards
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
