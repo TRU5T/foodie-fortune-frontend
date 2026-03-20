@@ -1,8 +1,11 @@
 
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export const Footer = () => {
+  const { user } = useAuth();
+
   return (
     <footer className="bg-muted py-8 mt-10">
       <div className="container">
@@ -10,7 +13,7 @@ export const Footer = () => {
           <div>
             <h3 className="font-bold text-lg mb-4">Redeemr</h3>
             <p className="text-sm text-muted-foreground">
-              Delicious food, amazing rewards. Earn points with every order and redeem for free meals.
+              Digital loyalty made simple. Collect stamps, earn rewards, and never lose a punch card again.
             </p>
             <div className="flex mt-4 space-x-4">
               <a href="#" className="text-muted-foreground hover:text-primary">
@@ -33,21 +36,40 @@ export const Footer = () => {
                   Home
                 </Link>
               </li>
-              <li>
-                <Link to="/rewards" className="text-sm text-muted-foreground hover:text-primary">
-                  Rewards
-                </Link>
-              </li>
-              <li>
-                <Link to="/restaurants" className="text-sm text-muted-foreground hover:text-primary">
-                  Restaurants
-                </Link>
-              </li>
-              <li>
-                <Link to="/profile" className="text-sm text-muted-foreground hover:text-primary">
-                  My Account
-                </Link>
-              </li>
+              {user && (
+                <li>
+                  <Link to="/rewards" className="text-sm text-muted-foreground hover:text-primary">
+                    Rewards
+                  </Link>
+                </li>
+              )}
+              {user && (
+                <li>
+                  <Link to="/restaurants" className="text-sm text-muted-foreground hover:text-primary">
+                    Restaurants
+                  </Link>
+                </li>
+              )}
+              {!user && (
+                <li>
+                  <Link to="/business" className="text-sm text-muted-foreground hover:text-primary">
+                    For Businesses
+                  </Link>
+                </li>
+              )}
+              {user ? (
+                <li>
+                  <Link to="/profile" className="text-sm text-muted-foreground hover:text-primary">
+                    My Account
+                  </Link>
+                </li>
+              ) : (
+                <li>
+                  <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary">
+                    Sign In
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
           
@@ -80,10 +102,7 @@ export const Footer = () => {
           <div>
             <h4 className="font-medium mb-4">Contact</h4>
             <address className="not-italic text-sm text-muted-foreground">
-              
-              
               <p className="mt-2">support@redeemr.app</p>
-              
             </address>
           </div>
         </div>
@@ -92,6 +111,6 @@ export const Footer = () => {
           <p>© {new Date().getFullYear()} Redeemr. All rights reserved.</p>
         </div>
       </div>
-    </footer>);
-
+    </footer>
+  );
 };
