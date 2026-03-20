@@ -84,23 +84,23 @@ export const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-card p-6 rounded-lg border">
               <Trophy className="h-10 w-10 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Points on Every Order</h3>
+              <h3 className="text-xl font-semibold mb-2">Earn With Every Visit</h3>
               <p className="text-muted-foreground">
-                Earn points with every purchase that you can redeem for amazing rewards.
+                Collect stamps each time you visit and unlock rewards when your card is full.
               </p>
             </div>
             <div className="bg-card p-6 rounded-lg border">
               <CreditCard className="h-10 w-10 text-primary mb-4" />
               <h3 className="text-xl font-semibold mb-2">Digital Stamp Cards</h3>
               <p className="text-muted-foreground">
-                No more physical cards - collect digital stamps for your favorite spots.
+                No more lost paper cards — your stamps live on your phone, always with you.
               </p>
             </div>
             <div className="bg-card p-6 rounded-lg border">
               <Clock className="h-10 w-10 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Fast & Convenient</h3>
+              <h3 className="text-xl font-semibold mb-2">Quick QR Scan</h3>
               <p className="text-muted-foreground">
-                Order ahead or show your QR code in-store for quick and easy service.
+                Show your QR code at the till. One scan, stamp collected — done in seconds.
               </p>
             </div>
           </div>
