@@ -1,37 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { RestaurantCard } from "@/components/RestaurantCard";
-import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift } from "lucide-react";
+import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift, Store, Rocket, Bell } from "lucide-react";
 
 export const LandingPage = () => {
-  const featuredRestaurants = [
-  {
-    id: "1",
-    name: "Burger King",
-    image: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1965&auto=format&fit=crop",
-    cuisine: "American, Burgers",
-    rating: 4.5,
-    deliveryTime: "15-25 min",
-    pointsPerDollar: 2
-  },
-  {
-    id: "2",
-    name: "Pizza Palace",
-    image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=2340&auto=format&fit=crop",
-    cuisine: "Italian, Pizza",
-    rating: 4.7,
-    deliveryTime: "20-30 min",
-    pointsPerDollar: 3
-  },
-  {
-    id: "3",
-    name: "Sushi Spot",
-    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=2340&auto=format&fit=crop",
-    cuisine: "Japanese, Sushi",
-    rating: 4.8,
-    deliveryTime: "25-35 min",
-    pointsPerDollar: 4
-  }];
 
 
   return (
@@ -136,24 +107,117 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* Featured Restaurants Section */}
+      {/* Coming Soon / Launching Section */}
       <section className="py-20 bg-background">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Featured Restaurants</h2>
-            <p className="text-xl text-muted-foreground">
-              Discover amazing places near you
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <Rocket className="h-4 w-4" />
+              Launching Soon
+            </div>
+            <h2 className="text-4xl font-bold mb-4">Restaurants Are Joining</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              We're onboarding the best local restaurants in your area. Be the first to know when your favorites go live.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {featuredRestaurants.map((restaurant) =>
-            <RestaurantCard key={restaurant.id} {...restaurant} />
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="bg-muted/50 border border-dashed border-border rounded-xl p-8 text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <Store className="h-7 w-7 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Local Favourites</h3>
+              <p className="text-muted-foreground text-sm">
+                Your go-to cafés, restaurants, and takeaways — all with loyalty built in.
+              </p>
+            </div>
+            <div className="bg-muted/50 border border-dashed border-border rounded-xl p-8 text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-accent/10 flex items-center justify-center">
+                <QrCode className="h-7 w-7 text-accent" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Scan & Stamp</h3>
+              <p className="text-muted-foreground text-sm">
+                One scan per visit. Watch your stamps stack up and rewards unlock.
+              </p>
+            </div>
+            <div className="bg-muted/50 border border-dashed border-border rounded-xl p-8 text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-secondary/10 flex items-center justify-center">
+                <Bell className="h-7 w-7 text-secondary" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Get Notified</h3>
+              <p className="text-muted-foreground text-sm">
+                Sign up now and we'll let you know the moment restaurants near you go live.
+              </p>
+            </div>
           </div>
           <div className="text-center">
             <Button asChild size="lg">
-              <Link to="/restaurants">View All Restaurants</Link>
+              <Link to="/auth?tab=register">Join the Waitlist</Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* For Business Owners Section */}
+      <section className="py-20 bg-muted">
+        <div className="container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl font-bold mb-4">Own a Restaurant?</h2>
+              <p className="text-xl text-muted-foreground mb-6">
+                Redeemr gives you a digital loyalty programme your customers will actually use. No apps to download, no plastic cards — just a simple QR scan.
+              </p>
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-start gap-3">
+                  <div className="mt-1 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <Trophy className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <span className="text-muted-foreground">Create custom stamp cards & rewards in minutes</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="mt-1 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <CreditCard className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <span className="text-muted-foreground">Track customer visits and engagement with real analytics</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="mt-1 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <Clock className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <span className="text-muted-foreground">Get set up in under 5 minutes — free to start</span>
+                </li>
+              </ul>
+              <Button asChild size="lg">
+                <Link to="/business">Learn More</Link>
+              </Button>
+            </div>
+            <div className="bg-card border rounded-2xl p-8 shadow-sm">
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Store className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">Your Restaurant</p>
+                    <p className="text-xs text-muted-foreground">Stamp card active · 3 rewards</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-5 gap-2">
+                  {Array.from({ length: 10 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`aspect-square rounded-lg flex items-center justify-center text-lg ${
+                        i < 6
+                          ? "bg-primary/15 text-primary"
+                          : "bg-muted text-muted-foreground/30"
+                      }`}
+                    >
+                      {i < 6 ? "★" : "☆"}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-center text-sm text-muted-foreground">6 / 10 stamps collected</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
