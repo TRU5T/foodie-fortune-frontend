@@ -45,9 +45,9 @@ export const LandingPage = () => {
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
                 <UtensilsCrossed className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-2xl font-semibold mb-3">1. Order Food</h3>
+              <h3 className="text-2xl font-semibold mb-3">1. Visit</h3>
               <p className="text-muted-foreground">
-                Browse and order from your favorite local restaurants or visit them in person.
+                Head to any participating café, restaurant, or takeaway near you.
               </p>
             </div>
             <div className="bg-card p-8 rounded-xl border shadow-sm text-center">
