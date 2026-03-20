@@ -23,8 +23,8 @@ export const LandingPage = () => {
               <Button asChild size="lg">
                 <Link to="/auth?tab=register">Get Started Free</Link>
               </Button>
-              <Button asChild size="lg" variant="secondary">
-                <Link to="/business">For Businesses</Link>
+              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+                <Link to="/business" className="text-primary-foreground bg-primary">For Businesses</Link>
               </Button>
             </div>
           </div>
@@ -202,18 +202,18 @@ export const LandingPage = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-5 gap-2">
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={`aspect-square rounded-lg flex items-center justify-center text-lg ${
-                        i < 6
-                          ? "bg-primary/15 text-primary"
-                          : "bg-muted text-muted-foreground/30"
-                      }`}
-                    >
+                  {Array.from({ length: 10 }).map((_, i) =>
+                  <div
+                    key={i}
+                    className={`aspect-square rounded-lg flex items-center justify-center text-lg ${
+                    i < 6 ?
+                    "bg-primary/15 text-primary" :
+                    "bg-muted text-muted-foreground/30"}`
+                    }>
+                    
                       {i < 6 ? "★" : "☆"}
                     </div>
-                  ))}
+                  )}
                 </div>
                 <p className="text-center text-sm text-muted-foreground">6 / 10 stamps collected</p>
               </div>
