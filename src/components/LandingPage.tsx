@@ -76,9 +76,9 @@ export const LandingPage = () => {
       <section className="py-20 bg-muted">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Why Choose Us?</h2>
+            <h2 className="text-4xl font-bold mb-4">Why Choose Redeemr?</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              More than just a food ordering platform
+              The smarter way to reward loyal customers
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
