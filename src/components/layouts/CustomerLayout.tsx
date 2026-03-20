@@ -18,7 +18,6 @@ const CustomerNavbar = () => {
 
   const links = [
     { to: "/", label: "Home", icon: Home, end: true },
-    { to: "/restaurants", label: "Restaurants", icon: UtensilsCrossed },
     ...(user
       ? [
           { to: "/rewards", label: "Rewards", icon: Award },
