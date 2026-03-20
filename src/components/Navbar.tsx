@@ -16,9 +16,11 @@ export const Navbar = () => {
       <Link to="/" className="font-medium hover:text-primary transition-colors">
         Home
       </Link>
-      <Link to="/restaurants" className="font-medium hover:text-primary transition-colors">
-        Restaurants
-      </Link>
+      {user && (
+        <Link to="/restaurants" className="font-medium hover:text-primary transition-colors">
+          Restaurants
+        </Link>
+      )}
       {user && (
         <Link to="/my-stamp-cards" className="font-medium hover:text-primary transition-colors flex items-center gap-1">
           <Stamp className="h-4 w-4" />
