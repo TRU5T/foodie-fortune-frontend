@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { RestaurantCard } from "@/components/RestaurantCard";
-import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift } from "lucide-react";
+import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift, Store, Rocket, Bell } from "lucide-react";
 
 export const LandingPage = () => {
   const featuredRestaurants = [
