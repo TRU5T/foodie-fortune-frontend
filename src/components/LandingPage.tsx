@@ -14,17 +14,17 @@ export const LandingPage = () => {
         <div className="container absolute inset-0 flex items-center z-20">
           <div className="max-w-2xl text-white">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Eat, Earn, Enjoy Rewards
+              Loyalty Made Simple
             </h1>
             <p className="text-xl mb-8 leading-relaxed">
-              Your favorite restaurants, all in one place. Order food, collect stamps, earn points with every purchase, and unlock exclusive rewards. Join thousands of food lovers today!
+              Redeemr replaces paper punch cards with a digital stamp system. Visit your favourite spots, scan a QR code, collect stamps, and unlock real rewards — all from your phone.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button asChild size="lg">
                 <Link to="/auth?tab=register">Get Started Free</Link>
               </Button>
-              <Button asChild size="lg">
-                <Link to="/restaurants">Browse Restaurants</Link>
+              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+                <Link to="/business">For Businesses</Link>
               </Button>
             </div>
           </div>
