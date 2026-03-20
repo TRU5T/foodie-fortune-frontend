@@ -3,34 +3,6 @@ import { Link } from "react-router-dom";
 import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift, Store, Rocket, Bell } from "lucide-react";
 
 export const LandingPage = () => {
-  const featuredRestaurants = [
-  {
-    id: "1",
-    name: "Burger King",
-    image: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1965&auto=format&fit=crop",
-    cuisine: "American, Burgers",
-    rating: 4.5,
-    deliveryTime: "15-25 min",
-    pointsPerDollar: 2
-  },
-  {
-    id: "2",
-    name: "Pizza Palace",
-    image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=2340&auto=format&fit=crop",
-    cuisine: "Italian, Pizza",
-    rating: 4.7,
-    deliveryTime: "20-30 min",
-    pointsPerDollar: 3
-  },
-  {
-    id: "3",
-    name: "Sushi Spot",
-    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=2340&auto=format&fit=crop",
-    cuisine: "Japanese, Sushi",
-    rating: 4.8,
-    deliveryTime: "25-35 min",
-    pointsPerDollar: 4
-  }];
 
 
   return (
