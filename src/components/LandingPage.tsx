@@ -23,7 +23,7 @@ export const LandingPage = () => {
               <Button asChild size="lg">
                 <Link to="/auth?tab=register">Get Started Free</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+              <Button asChild size="lg" variant="secondary">
                 <Link to="/business">For Businesses</Link>
               </Button>
             </div>
