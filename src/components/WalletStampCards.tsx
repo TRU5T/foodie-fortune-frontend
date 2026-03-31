@@ -1,24 +1,23 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Coffee, ChevronUp, Award, Sparkles, Store } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Check, ChevronUp, Award, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
-const CARD_COLORS = [
-  { gradient: "from-orange-500 via-amber-500 to-yellow-500", stamp: "bg-orange-300/40", ring: "ring-orange-200" },
-  { gradient: "from-blue-600 via-indigo-600 to-violet-600", stamp: "bg-blue-300/40", ring: "ring-blue-200" },
-  { gradient: "from-emerald-500 via-teal-500 to-cyan-500", stamp: "bg-emerald-300/40", ring: "ring-emerald-200" },
-  { gradient: "from-purple-500 via-fuchsia-500 to-pink-500", stamp: "bg-purple-300/40", ring: "ring-purple-200" },
-  { gradient: "from-rose-500 via-red-500 to-orange-500", stamp: "bg-rose-300/40", ring: "ring-rose-200" },
-  { gradient: "from-cyan-500 via-sky-500 to-blue-500", stamp: "bg-cyan-300/40", ring: "ring-cyan-200" },
+const CARD_THEMES = [
+  { bg: "bg-[#1C1C1E]", accent: "bg-primary" },
+  { bg: "bg-[#1A1A2E]", accent: "bg-[hsl(224,75%,50%)]" },
+  { bg: "bg-[#1E1E1E]", accent: "bg-[hsl(142,70%,45%)]" },
+  { bg: "bg-[#2D1B2E]", accent: "bg-[hsl(280,60%,55%)]" },
+  { bg: "bg-[#1B2838]", accent: "bg-[hsl(200,70%,50%)]" },
+  { bg: "bg-[#2E1B1B]", accent: "bg-[hsl(0,65%,55%)]" },
 ];
 
-const COLLAPSED_GAP = 62;
-const EXPANDED_GAP = 20;
+const COLLAPSED_HEIGHT = 72;
+const COLLAPSED_GAP = 68;
 
 interface WalletCardData {
   id: string;
@@ -30,29 +29,15 @@ interface WalletCardData {
   isComplete: boolean;
 }
 
-const StampDot = ({ filled, index, total }: { filled: boolean; index: number; total: number }) => {
-  const isLastNeeded = !filled && index === total;
-  return (
-    <motion.div
-      initial={false}
-      animate={filled ? { scale: [1, 1.2, 1] } : {}}
-      transition={{ duration: 0.3, delay: index * 0.03 }}
-      className={`aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${
-        filled
-          ? "bg-white/35 border-2 border-white shadow-[0_0_8px_rgba(255,255,255,0.3)]"
-          : isLastNeeded
-          ? "border-2 border-dashed border-white/40 bg-white/5"
-          : "border-2 border-white/15 bg-white/5"
-      }`}
-    >
-      {filled ? (
-        <Check className="h-3.5 w-3.5 text-white drop-shadow-sm" />
-      ) : (
-        <Coffee className={`h-3 w-3 ${isLastNeeded ? "text-white/40" : "text-white/20"}`} />
-      )}
-    </motion.div>
-  );
-};
+const StampIndicator = ({ filled, isComplete, accentClass }: { filled: boolean; isComplete: boolean; accentClass: string }) => (
+  <div
+    className={`aspect-square rounded-full transition-all duration-300 ${
+      filled
+        ? `${accentClass} shadow-[0_0_8px_rgba(255,255,255,0.15)]`
+        : "bg-white/8 border border-white/10"
+    }`}
+  />
+);
 
 const WalletCard = ({
   card,
@@ -68,57 +53,53 @@ const WalletCard = ({
   onTap: () => void;
 }) => {
   const navigate = useNavigate();
-  const colors = CARD_COLORS[index % CARD_COLORS.length];
-  const isThisExpanded = expandedIndex === index;
-  const progress = Math.round((card.currentStamps / card.totalStamps) * 100);
+  const theme = CARD_THEMES[index % CARD_THEMES.length];
+  const isExpanded = expandedIndex === index;
+  const progress = Math.min(Math.round((card.currentStamps / card.totalStamps) * 100), 100);
 
   const getY = () => {
     if (expandedIndex === null) return index * COLLAPSED_GAP;
     if (index <= expandedIndex) return index * COLLAPSED_GAP;
-    return expandedIndex * COLLAPSED_GAP + 300 + (index - expandedIndex - 1) * COLLAPSED_GAP + EXPANDED_GAP;
+    return expandedIndex * COLLAPSED_GAP + 320 + (index - expandedIndex - 1) * COLLAPSED_GAP + 16;
   };
 
   return (
     <motion.div
       layout
-      className="absolute left-0 right-0 px-4"
-      style={{ zIndex: isThisExpanded ? 50 : totalCards - index }}
+      className="absolute left-0 right-0 px-5"
+      style={{ zIndex: isExpanded ? 50 : totalCards - index }}
       animate={{
         y: getY(),
-        scale: isThisExpanded ? 1 : expandedIndex !== null && index < expandedIndex ? 0.97 : 1,
+        scale: isExpanded ? 1 : expandedIndex !== null && index < expandedIndex ? 0.97 : 1,
       }}
-      transition={{ type: "spring", stiffness: 280, damping: 28 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
       onClick={onTap}
     >
       <div
-        className={`rounded-3xl bg-gradient-to-br ${colors.gradient} p-5 shadow-2xl cursor-pointer select-none overflow-hidden relative`}
-        style={{ minHeight: isThisExpanded ? 280 : 78 }}
+        className={`${theme.bg} rounded-[22px] shadow-2xl cursor-pointer select-none overflow-hidden`}
+        style={{ minHeight: isExpanded ? 310 : COLLAPSED_HEIGHT }}
       >
-        {/* Decorative pattern overlay */}
-        <div className="absolute inset-0 opacity-[0.07]" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-          backgroundSize: '20px 20px',
-        }} />
-
-        {/* Header */}
-        <div className="flex items-center justify-between relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="h-11 w-11 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md shadow-inner">
-              <Store className="h-5 w-5 text-white" />
+        {/* Header — always visible */}
+        <div className="px-5 pt-4 pb-3 flex items-center justify-between">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className={`h-10 w-10 rounded-xl ${theme.accent} flex items-center justify-center flex-shrink-0`}>
+              <span className="text-white font-bold text-sm">
+                {card.restaurantName.charAt(0)}
+              </span>
             </div>
-            <div>
-              <h3 className="text-white font-bold text-[15px] leading-tight tracking-tight">
+            <div className="flex-1 min-w-0">
+              <h3 className="text-white font-semibold text-[15px] leading-tight tracking-tight truncate">
                 {card.restaurantName}
               </h3>
-              {!isThisExpanded && (
-                <div className="flex items-center gap-2 mt-0.5">
-                  <div className="flex-1 h-1.5 bg-white/15 rounded-full w-20 overflow-hidden">
+              {!isExpanded && (
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="flex-1 h-[3px] bg-white/10 rounded-full max-w-[100px] overflow-hidden">
                     <div
-                      className="h-full bg-white/70 rounded-full transition-all duration-500"
+                      className={`h-full ${theme.accent} rounded-full transition-all duration-500`}
                       style={{ width: `${progress}%` }}
                     />
                   </div>
-                  <span className="text-white/70 text-[11px] font-medium">
+                  <span className="text-white/40 text-[11px] font-medium tabular-nums">
                     {card.currentStamps}/{card.totalStamps}
                   </span>
                 </div>
@@ -126,60 +107,81 @@ const WalletCard = ({
             </div>
           </div>
           {card.isComplete && (
-            <Badge className="bg-white/25 text-white border-0 backdrop-blur-md text-[11px] font-semibold gap-1 px-2.5 py-1 shadow-sm">
-              <Sparkles className="h-3 w-3" />
-              Ready!
-            </Badge>
+            <div className={`h-7 w-7 rounded-full ${theme.accent} flex items-center justify-center flex-shrink-0`}>
+              <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />
+            </div>
           )}
         </div>
 
         {/* Expanded content */}
         <AnimatePresence>
-          {isThisExpanded && (
+          {isExpanded && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              className="mt-5 relative z-10"
+              transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              {/* Reward label */}
-              <div className="bg-white/10 backdrop-blur-md rounded-xl px-4 py-2.5 mb-4">
-                <p className="text-white/60 text-[11px] font-medium uppercase tracking-wider">Reward</p>
-                <p className="text-white font-semibold text-sm">{card.rewardName}</p>
-              </div>
+              {/* Divider */}
+              <div className="mx-5 border-t border-dashed border-white/8" />
 
-              {/* Stamp grid */}
-              <div className="grid grid-cols-5 gap-2.5 mb-4">
-                {Array.from({ length: card.totalStamps }).map((_, i) => (
-                  <StampDot
-                    key={i}
-                    filled={i < card.currentStamps}
-                    index={i}
-                    total={card.currentStamps}
-                  />
-                ))}
-              </div>
+              <div className="px-5 pt-4 pb-5">
+                {/* Stamp grid */}
+                <div className="grid grid-cols-5 gap-2 mb-5">
+                  {Array.from({ length: card.totalStamps }).map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={false}
+                      animate={i < card.currentStamps ? { scale: [0.8, 1.05, 1] } : {}}
+                      transition={{ duration: 0.25, delay: i * 0.03 }}
+                    >
+                      <StampIndicator
+                        filled={i < card.currentStamps}
+                        isComplete={card.isComplete}
+                        accentClass={theme.accent}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
 
-              {/* Footer */}
-              <div className="flex items-center justify-between mt-2">
-                <div>
-                  <span className="text-white/80 text-sm font-medium">
+                {/* Progress label */}
+                <div className="flex items-center justify-between mb-5">
+                  <span className="text-white/40 text-xs font-medium">
                     {card.isComplete
-                      ? "🎉 All stamps collected!"
+                      ? "All stamps collected"
                       : `${card.totalStamps - card.currentStamps} more to go`}
                   </span>
+                  <span className="text-white/60 text-xs font-semibold tabular-nums">
+                    {progress}%
+                  </span>
                 </div>
-                <Button
-                  size="sm"
-                  className="bg-white/25 text-white hover:bg-white/35 border-0 text-xs h-9 px-4 rounded-xl backdrop-blur-md font-semibold shadow-sm"
+
+                {/* Reward bar */}
+                <div
+                  className="rounded-xl bg-white/5 px-4 py-3 flex items-center justify-between"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(`/restaurant/${card.restaurantId}`);
                   }}
                 >
-                  {card.isComplete ? "Redeem →" : "Visit →"}
-                </Button>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-[10px] font-medium uppercase tracking-[0.1em] ${
+                      card.isComplete ? "text-primary" : "text-white/30"
+                    }`}>
+                      {card.isComplete ? "Ready to redeem" : "Reward"}
+                    </p>
+                    <p className="text-white font-semibold text-sm truncate mt-0.5">
+                      {card.rewardName}
+                    </p>
+                  </div>
+                  <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                    card.isComplete ? theme.accent : "bg-white/8"
+                  }`}>
+                    <ArrowRight className={`h-3.5 w-3.5 ${
+                      card.isComplete ? "text-white" : "text-white/40"
+                    }`} />
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
@@ -244,8 +246,8 @@ export const WalletStampCards = () => {
 
   const totalHeight =
     expandedIndex !== null
-      ? (cards.length - 1) * COLLAPSED_GAP + 300 + EXPANDED_GAP
-      : cards.length * COLLAPSED_GAP + 60;
+      ? (cards.length - 1) * COLLAPSED_GAP + 320 + 16
+      : cards.length * COLLAPSED_GAP + 40;
 
   if (isLoading) {
     return (
@@ -258,14 +260,14 @@ export const WalletStampCards = () => {
   if (cards.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-        <div className="h-20 w-20 rounded-3xl bg-primary/10 flex items-center justify-center mb-5">
-          <Award className="h-10 w-10 text-primary" />
+        <div className="h-20 w-20 rounded-3xl bg-muted flex items-center justify-center mb-5">
+          <Award className="h-10 w-10 text-muted-foreground" />
         </div>
-        <h2 className="text-2xl font-bold mb-2">No Stamp Cards Yet</h2>
-        <p className="text-muted-foreground mb-8 max-w-xs">
-          Visit a restaurant and start collecting stamps to earn rewards!
+        <h2 className="text-xl font-bold mb-2">No Stamp Cards Yet</h2>
+        <p className="text-muted-foreground text-sm mb-8 max-w-xs">
+          Visit a restaurant and start collecting stamps to earn rewards.
         </p>
-        <Button onClick={() => navigate("/restaurants")} size="lg" className="rounded-xl px-8">
+        <Button onClick={() => navigate("/restaurants")} className="rounded-xl px-8">
           Find Restaurants
         </Button>
       </div>
@@ -280,14 +282,14 @@ export const WalletStampCards = () => {
       <div className="px-5 pt-6 pb-5">
         <h1 className="text-2xl font-bold tracking-tight">My Wallet</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          {cards.length} stamp card{cards.length !== 1 ? "s" : ""}
+          {cards.length} card{cards.length !== 1 ? "s" : ""}
           {completedCount > 0 && (
-            <span className="text-primary font-medium"> · {completedCount} ready to redeem</span>
+            <span className="text-primary font-medium"> · {completedCount} ready</span>
           )}
         </p>
       </div>
 
-      {/* Wallet stack */}
+      {/* Stack */}
       <div className="relative" style={{ height: totalHeight }}>
         {cards.map((card, index) => (
           <WalletCard
@@ -305,17 +307,17 @@ export const WalletStampCards = () => {
       <AnimatePresence>
         {expandedIndex !== null && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="flex justify-center mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex justify-center mt-4"
           >
             <button
               onClick={() => setExpandedIndex(null)}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors bg-muted/50 rounded-full px-4 py-2"
+              className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors rounded-full px-4 py-2"
             >
               <ChevronUp className="h-3 w-3" />
-              Tap to collapse
+              Collapse
             </button>
           </motion.div>
         )}

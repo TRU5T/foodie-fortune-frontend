@@ -1,7 +1,5 @@
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Coffee, Check, Sparkles, Store } from "lucide-react";
+import { motion } from "framer-motion";
+import { Check, ArrowRight } from "lucide-react";
 
 interface StampCardProps {
   restaurantName: string;
@@ -21,94 +19,138 @@ export const StampCard = ({
   expiryDate,
 }: StampCardProps) => {
   const isComplete = currentStamps >= totalStamps;
-  const progress = Math.round((currentStamps / totalStamps) * 100);
+  const progress = Math.min((currentStamps / totalStamps) * 100, 100);
 
   return (
-    <Card className={`overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
-      isComplete ? "ring-2 ring-primary/30 shadow-primary/10" : ""
-    }`}>
-      {/* Colored header bar */}
-      <div className={`h-2 w-full ${isComplete ? "bg-primary" : "bg-gradient-to-r from-primary/40 to-primary/20"}`} />
-      
-      <CardHeader className="pb-3 pt-4">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Store className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-bold text-base leading-tight">{restaurantName}</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {isComplete ? "Reward earned!" : `${currentStamps} of ${totalStamps} stamps`}
-              </p>
-            </div>
-          </div>
-          {isComplete && (
-            <Badge className="bg-primary text-primary-foreground gap-1 text-xs">
-              <Sparkles className="h-3 w-3" />
-              Ready!
-            </Badge>
-          )}
-        </div>
-      </CardHeader>
-
-      <CardContent className="pb-3">
-        {/* Reward info */}
-        <div className="bg-muted/50 rounded-xl px-3 py-2.5 mb-4">
-          <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Collect {totalStamps} stamps to earn</p>
-          <p className="text-sm font-semibold mt-0.5">{rewardName}</p>
-        </div>
-
-        {/* Stamp grid */}
-        <div className="grid grid-cols-5 gap-2">
-          {Array.from({ length: totalStamps }).map((_, index) => (
-            <div
-              key={index}
-              className={`aspect-square rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                index < currentStamps
-                  ? "bg-primary/15 border-primary text-primary shadow-sm"
-                  : "bg-muted/30 border-border"
-              }`}
-            >
-              {index < currentStamps ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <Coffee className="h-3.5 w-3.5 text-muted-foreground/30" />
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+    >
+      <a
+        href={`/restaurant/${restaurantId}`}
+        className="block group"
+      >
+        <div
+          className={`relative overflow-hidden rounded-2xl border transition-all duration-300 ${
+            isComplete
+              ? "bg-foreground text-background border-foreground shadow-xl shadow-foreground/10"
+              : "bg-card text-card-foreground border-border hover:border-foreground/20 hover:shadow-lg"
+          }`}
+        >
+          {/* Top section */}
+          <div className="px-5 pt-5 pb-4">
+            <div className="flex items-start justify-between mb-1">
+              <div className="flex-1 min-w-0">
+                <p className={`text-[11px] font-medium uppercase tracking-[0.1em] mb-1 ${
+                  isComplete ? "text-background/50" : "text-muted-foreground"
+                }`}>
+                  Loyalty Card
+                </p>
+                <h3 className="font-semibold text-lg leading-tight tracking-tight truncate">
+                  {restaurantName}
+                </h3>
+              </div>
+              {isComplete && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="h-8 w-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 ml-3"
+                >
+                  <Check className="h-4 w-4 text-primary-foreground" strokeWidth={3} />
+                </motion.div>
               )}
             </div>
-          ))}
-        </div>
-
-        {/* Progress bar */}
-        <div className="mt-4 flex items-center gap-3">
-          <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-full transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
           </div>
-          <span className="text-xs text-muted-foreground font-medium">{progress}%</span>
+
+          {/* Perforated divider */}
+          <div className="relative mx-5">
+            <div className={`border-t border-dashed ${
+              isComplete ? "border-background/15" : "border-border"
+            }`} />
+          </div>
+
+          {/* Stamps section */}
+          <div className="px-5 py-4">
+            <div className="flex items-center gap-[6px]">
+              {Array.from({ length: totalStamps }).map((_, index) => (
+                <motion.div
+                  key={index}
+                  initial={false}
+                  animate={index < currentStamps ? { scale: [0.8, 1.1, 1] } : {}}
+                  transition={{ duration: 0.3, delay: index * 0.04 }}
+                  className="flex-1"
+                >
+                  <div
+                    className={`aspect-square rounded-full transition-all duration-300 ${
+                      index < currentStamps
+                        ? isComplete
+                          ? "bg-primary shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
+                          : "bg-foreground"
+                        : isComplete
+                          ? "bg-background/10 border border-background/20"
+                          : "bg-muted border border-border"
+                    }`}
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Progress text */}
+            <div className="flex items-center justify-between mt-3">
+              <span className={`text-xs font-medium ${
+                isComplete ? "text-background/60" : "text-muted-foreground"
+              }`}>
+                {isComplete
+                  ? "All stamps collected"
+                  : `${currentStamps} of ${totalStamps}`}
+              </span>
+              <span className={`text-xs tabular-nums font-semibold ${
+                isComplete ? "text-primary" : "text-foreground"
+              }`}>
+                {Math.round(progress)}%
+              </span>
+            </div>
+          </div>
+
+          {/* Reward section */}
+          <div className={`px-5 pb-5 ${isComplete ? "" : ""}`}>
+            <div className={`rounded-xl px-4 py-3 flex items-center justify-between ${
+              isComplete
+                ? "bg-primary/15"
+                : "bg-muted/60"
+            }`}>
+              <div className="flex-1 min-w-0">
+                <p className={`text-[10px] font-medium uppercase tracking-[0.1em] ${
+                  isComplete ? "text-primary" : "text-muted-foreground"
+                }`}>
+                  {isComplete ? "Ready to redeem" : "Reward"}
+                </p>
+                <p className={`text-sm font-semibold truncate mt-0.5 ${
+                  isComplete ? "text-background" : "text-foreground"
+                }`}>
+                  {rewardName}
+                </p>
+              </div>
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center transition-transform group-hover:translate-x-0.5 ${
+                isComplete
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-foreground/5 text-muted-foreground group-hover:bg-foreground/10"
+              }`}>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </div>
+            </div>
+
+            {expiryDate && (
+              <p className={`text-[11px] mt-2.5 ${
+                isComplete ? "text-background/40" : "text-muted-foreground/60"
+              }`}>
+                Expires {expiryDate}
+              </p>
+            )}
+          </div>
         </div>
-
-        {expiryDate && (
-          <p className="text-xs text-muted-foreground mt-3">
-            Expires: {expiryDate}
-          </p>
-        )}
-      </CardContent>
-
-      <CardFooter className="pt-0 pb-4">
-        <Button
-          variant={isComplete ? "default" : "outline"}
-          className="w-full rounded-xl"
-          disabled={!isComplete}
-          asChild
-        >
-          <a href={`/restaurant/${restaurantId}`}>
-            {isComplete ? "Redeem Reward →" : `${totalStamps - currentStamps} more stamps needed`}
-          </a>
-        </Button>
-      </CardFooter>
-    </Card>
+      </a>
+    </motion.div>
   );
 };
