@@ -101,15 +101,24 @@ const VendorDashboard = () => {
               <ScanLine className="h-4 w-4 mr-2" />Scan Customer
             </Link>
           </Button>
-          <Badge variant={isTier2 ? "default" : "secondary"}>
-            {isTier2 ? "Tier 2 — Rewards + Ordering" : "Tier 1 — Rewards Only"}
-          </Badge>
-          <Badge variant="outline">
+          <div className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold tracking-wide ${isTier2 ? 'bg-primary/10 text-primary ring-1 ring-primary/20' : 'bg-muted text-muted-foreground ring-1 ring-border'}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${isTier2 ? 'bg-primary' : 'bg-muted-foreground/50'}`} />
+            {isTier2 ? "Tier 2 · Rewards + Ordering" : "Tier 1 · Rewards Only"}
+          </div>
+          <div className="inline-flex items-center gap-1.5 rounded-md bg-muted px-3 py-1.5 text-xs font-medium text-foreground ring-1 ring-border">
             {activeRestaurant.loyalty_type === 'stamps' ? '🎟️ Stamps' : '⭐ Points'}
-          </Badge>
-          <Badge variant={hasActiveSubscription ? "default" : "destructive"}>
-            {hasActiveSubscription ? '✓ Subscribed' : '⚠ No Subscription'}
-          </Badge>
+          </div>
+          {hasActiveSubscription ? (
+            <div className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary ring-1 ring-primary/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              Active
+            </div>
+          ) : (
+            <Link to="/business" className="inline-flex items-center gap-1.5 rounded-md bg-destructive/10 px-3 py-1.5 text-xs font-semibold text-destructive ring-1 ring-destructive/20 hover:bg-destructive/15 transition-colors">
+              <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
+              No Subscription
+            </Link>
+          )}
         </div>
       </div>
 
