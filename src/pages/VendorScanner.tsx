@@ -356,65 +356,13 @@ const VendorScanner = () => {
   const awardLoyalty = useMutation({
     mutationFn: async () => {
       if (!user || !customer || !activeRestaurant) throw new Error('Missing data');
-      const isStamps = activeRestaurant.loyalty_type === 'stamps';
+      const { error } = await (supabase as any).rpc('award_loyalty', {
+        _customer_user_id: customer.id,
+        _restaurant_id: activeRestaurant.id,
+        _quantity: stampCount,
+      });
 
-      if (isStamps) {
-        const { data: existingCards } = await supabase
-          .from('stamp_cards')
-          .select('*')
-          .eq('user_id', customer.id)
-          .eq('restaurant_id', activeRestaurant.id)
-          .eq('is_complete', false);
-
-        if (!existingCards || existingCards.length === 0) {
-          const isComplete = stampCount >= activeRestaurant.stamps_required;
-          await supabase.from('stamp_cards').insert([{
-            user_id: customer.id,
-            restaurant_id: activeRestaurant.id,
-            current_stamps: stampCount,
-            total_stamps_required: activeRestaurant.stamps_required,
-            is_complete: isComplete,
-          }]);
-        } else {
-          const card = existingCards[0];
-          const newCount = card.current_stamps + stampCount;
-          const isComplete = newCount >= card.total_stamps_required;
-          await supabase.from('stamp_cards')
-            .update({ current_stamps: newCount, is_complete: isComplete })
-            .eq('id', card.id);
-        }
-      } else {
-        const pointsToAward = Math.floor(stampCount * activeRestaurant.points_per_dollar);
-        const { data: existing } = await supabase
-          .from('point_balances')
-          .select('*')
-          .eq('user_id', customer.id)
-          .eq('restaurant_id', activeRestaurant.id)
-          .maybeSingle();
-
-        if (existing) {
-          await supabase.from('point_balances').update({
-            balance: existing.balance + pointsToAward,
-            total_earned: existing.total_earned + pointsToAward,
-          }).eq('id', existing.id);
-        } else {
-          await supabase.from('point_balances').insert([{
-            user_id: customer.id,
-            restaurant_id: activeRestaurant.id,
-            balance: pointsToAward,
-            total_earned: pointsToAward,
-          }]);
-        }
-      }
-
-      await supabase.from('scan_logs').insert([{
-        vendor_user_id: user.id,
-        customer_user_id: customer.id,
-        restaurant_id: activeRestaurant.id,
-        action_type: isStamps ? 'stamp' : 'points',
-        stamps_awarded: isStamps ? stampCount : 0,
-        points_awarded: isStamps ? 0 : Math.floor(stampCount * activeRestaurant.points_per_dollar),
-      }]);
+      if (error) throw error;
     },
     onSuccess: () => {
       setScanState("success");
