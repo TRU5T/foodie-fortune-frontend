@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -96,6 +96,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       toast({ title: "Error signing up", description: sanitizeDbError(error), variant: "destructive" });
       throw error;
     }
+
+    // Fire-and-forget welcome email — never block signup if email fails.
+    if (data.user?.id) {
+      supabase.functions
+        .invoke('send-transactional-email', {
+          body: {
+            templateName: 'welcome',
+            recipientEmail: email,
+            idempotencyKey: `welcome-${data.user.id}`,
+            templateData: { name: fullName },
+          },
+        })
+        .catch((err) => console.error('Welcome email failed to enqueue:', err));
+    }
+
     toast({ title: "Account created!", description: "You've been successfully signed up." });
   };
 
