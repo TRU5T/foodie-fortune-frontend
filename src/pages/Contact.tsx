@@ -32,6 +32,19 @@ const Contact = () => {
 
       if (error) throw error;
 
+      // Send branded confirmation to the sender via the transactional pipeline
+      // (queue + retries + logging). Fire-and-forget — don't block UX.
+      supabase.functions
+        .invoke("send-transactional-email", {
+          body: {
+            templateName: "contact-confirmation",
+            recipientEmail: payload.email,
+            idempotencyKey: `contact-${crypto.randomUUID()}`,
+            templateData: { name: payload.name, subject: payload.subject },
+          },
+        })
+        .catch((err) => console.error("Contact confirmation email failed:", err));
+
       toast({ title: "Message sent", description: "We'll get back to you within 24 hours." });
       form.reset();
     } catch (err) {
