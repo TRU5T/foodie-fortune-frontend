@@ -736,6 +736,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      award_loyalty: {
+        Args: {
+          _customer_user_id: string
+          _quantity?: number
+          _restaurant_id: string
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
