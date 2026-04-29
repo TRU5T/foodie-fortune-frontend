@@ -48,34 +48,30 @@ export const BillingTab = () => {
   const { data: subscriptions, isLoading } = useQuery({
     queryKey: ["admin-vendor-subscriptions"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: subs, error } = await supabase
         .from("vendor_subscriptions")
-        .select(
-          `*,
-           restaurant:restaurants(name),
-           vendor:profiles!vendor_subscriptions_user_id_fkey(email, full_name)`
-        )
+        .select("*, restaurant:restaurants(name)")
         .order("current_period_end", { ascending: true });
+      if (error) throw error;
 
-      // Fallback: the FK alias above may not exist; do a manual join if it errors.
-      if (error) {
-        const { data: subs, error: e2 } = await supabase
-          .from("vendor_subscriptions")
-          .select("*, restaurant:restaurants(name)")
-          .order("current_period_end", { ascending: true });
-        if (e2) throw e2;
-        const userIds = [...new Set((subs ?? []).map((s) => s.user_id))];
-        const { data: profs } = await supabase
-          .from("profiles")
-          .select("id, email, full_name")
-          .in("id", userIds);
-        const profMap = new Map((profs ?? []).map((p) => [p.id, p]));
-        return (subs ?? []).map((s) => ({
-          ...s,
-          vendor: profMap.get(s.user_id) ?? null,
-        })) as SubRow[];
-      }
-      return (data ?? []) as SubRow[];
+      const userIds = [...new Set((subs ?? []).map((s) => s.user_id))];
+      if (userIds.length === 0) return [] as SubRow[];
+
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id, email, full_name")
+        .in("id", userIds);
+      const profMap = new Map((profs ?? []).map((p) => [p.id, p]));
+
+      return (subs ?? []).map((s) => ({
+        ...s,
+        vendor: profMap.get(s.user_id)
+          ? {
+              email: profMap.get(s.user_id)!.email,
+              full_name: profMap.get(s.user_id)!.full_name,
+            }
+          : null,
+      })) as SubRow[];
     },
   });
 
