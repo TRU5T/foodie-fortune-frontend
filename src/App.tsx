@@ -34,6 +34,7 @@ import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Unsubscribe from "./pages/Unsubscribe";
 const MyQRCode = lazy(() => import("./pages/MyQRCode"));
 const VendorScanner = lazy(() => import("./pages/VendorScanner"));
 
@@ -73,6 +74,7 @@ const App = () => (
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
+                <Route path="/unsubscribe" element={<Unsubscribe />} />
               </Route>
 
               {/* Vendor layout routes */}
