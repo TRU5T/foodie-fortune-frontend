@@ -162,11 +162,13 @@ const Index = () => {
                   key={r.id}
                   id={r.id}
                   name={r.name}
-                  image={r.image_url || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2340&auto=format&fit=crop"}
+                  image={r.cover_image_url || r.logo_url || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2340&auto=format&fit=crop"}
                   cuisine={r.cuisine || "Restaurant"}
-                  rating={r.rating ?? 4.5}
-                  deliveryTime={r.delivery_time || "—"}
+                  rating={4.5}
+                  deliveryTime={r.city || "—"}
                   pointsPerDollar={r.points_per_dollar ?? 1}
+                  stampsAvailable={r.loyalty_type === 'stamps'}
+                  offersOnlineOrdering={r.offers_online_ordering}
                 />
               ))}
             </div>
