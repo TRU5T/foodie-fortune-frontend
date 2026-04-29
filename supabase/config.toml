@@ -1,13 +1,13 @@
 project_id = "enxgmlixweivsjlodfaa"
 
-[functions.qr-token]
-verify_jwt = false
-
-[functions.send-push]
-verify_jwt = false
-
-[functions.send-contact-email]
-verify_jwt = false
-
-[functions.places-autocomplete]
-verify_jwt = false
+[functions]
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.places-autocomplete]
+    verify_jwt = false
+  [functions.qr-token]
+    verify_jwt = false
+  [functions.send-contact-email]
+    verify_jwt = false
+  [functions.send-push]
+    verify_jwt = false
