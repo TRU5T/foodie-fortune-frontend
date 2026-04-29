@@ -8,23 +8,23 @@ export const LandingPage = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative">
+      <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-secondary/90 z-10" />
         <div className="relative h-[600px] bg-[url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2574&auto=format&fit=crop')] bg-cover bg-center" />
         <div className="container absolute inset-0 flex items-center z-20">
-          <div className="max-w-2xl text-white">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+          <div className="max-w-2xl text-primary-foreground">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
               Loyalty Made Simple
             </h1>
-            <p className="text-xl mb-8 leading-relaxed">
+            <p className="text-lg sm:text-xl mb-8 leading-relaxed">
               Redeemr replaces paper punch cards with a digital stamp system. Visit your favourite spots, scan a QR code, collect stamps, and unlock real rewards — all from your phone.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg">
+              <Button asChild size="lg" variant="secondary">
                 <Link to="/auth?tab=register">Get Started Free</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                <Link to="/business" className="text-primary-foreground bg-primary">For Businesses</Link>
+              <Button asChild size="lg" variant="outline" className="border-primary-foreground text-primary-foreground bg-transparent hover:bg-primary-foreground/10 hover:text-primary-foreground">
+                <Link to="/business">For Businesses</Link>
               </Button>
             </div>
           </div>
@@ -223,17 +223,17 @@ export const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary to-secondary text-white">
+      <section className="py-20 bg-gradient-to-r from-primary to-secondary text-primary-foreground">
         <div className="container text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Start Earning Rewards?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Join our community of food lovers and start collecting rewards with every meal today!
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg">
+            <Button asChild size="lg" variant="secondary">
               <Link to="/auth?tab=register">Sign Up Now</Link>
             </Button>
-            <Button asChild size="lg">
+            <Button asChild size="lg" variant="outline" className="border-primary-foreground text-primary-foreground bg-transparent hover:bg-primary-foreground/10 hover:text-primary-foreground">
               <Link to="/auth">Sign In</Link>
             </Button>
           </div>
