@@ -25,6 +25,8 @@ import NotFound from "./pages/NotFound";
 import BusinessSubscription from "./pages/BusinessSubscription";
 import MyStampCards from "./pages/MyStampCards";
 import Auth from "./pages/Auth";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import VendorDashboard from "./pages/VendorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLanding from "./pages/AdminLanding";
@@ -64,6 +66,8 @@ const App = () => (
                 <Route path="/my-stamp-cards" element={<MyStampCards />} />
                 <Route path="/my-qr-code" element={<Suspense fallback={<SuspenseFallback />}><MyQRCode /></Suspense>} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/business" element={<BusinessSubscription />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/contact" element={<Contact />} />
