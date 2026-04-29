@@ -11,7 +11,8 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Users, Store, TrendingUp, ShieldCheck, Search } from "lucide-react";
+import { Users, Store, TrendingUp, ShieldCheck, Search, Receipt } from "lucide-react";
+import { BillingTab } from "@/components/admin/BillingTab";
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -168,6 +169,10 @@ const AdminDashboard = () => {
               </Badge>
             )}
           </TabsTrigger>
+          <TabsTrigger value="billing" className="gap-1.5">
+            <Receipt className="h-3.5 w-3.5" />
+            Billing
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="mt-6">
@@ -267,6 +272,10 @@ const AdminDashboard = () => {
               </TableBody>
             </Table>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="billing" className="mt-6">
+          <BillingTab />
         </TabsContent>
       </Tabs>
     </div>
