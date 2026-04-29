@@ -3,7 +3,8 @@ import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { ShoppingCart, User, Menu, Stamp, QrCode, Award, UtensilsCrossed, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { RoleSwitcher } from "@/components/RoleSwitcher";
 import { useAuth } from "@/context/AuthContext";
@@ -47,6 +48,10 @@ const CustomerNavbar = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent>
+                <VisuallyHidden>
+                  <SheetTitle>Navigation menu</SheetTitle>
+                  <SheetDescription>Browse the app's main sections</SheetDescription>
+                </VisuallyHidden>
                 <div className="flex flex-col mt-8 gap-4">
                   {links.map((link) => (
                     <NavLink
