@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -85,7 +85,12 @@ const Auth = () => {
                       <FormItem><FormLabel>Password</FormLabel><FormControl><Input type="password" placeholder="Enter your password" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                   </CardContent>
-                  <CardFooter><Button type="submit" className="w-full">Sign In</Button></CardFooter>
+                  <CardFooter className="flex flex-col gap-3">
+                    <Button type="submit" className="w-full">Sign In</Button>
+                    <Link to="/forgot-password" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      Forgot your password?
+                    </Link>
+                  </CardFooter>
                 </form>
               </Form>
             </Card>
