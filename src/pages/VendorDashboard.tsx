@@ -200,15 +200,32 @@ const VendorDashboard = () => {
                 </div>
               </CardContent>
             </Card>
-            {!hasActiveSubscription && (
-              <Card className="border-destructive">
-                <CardHeader><CardTitle>Subscription Required</CardTitle></CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">Your restaurant needs an active subscription ($20/mo) to remain visible to customers.</p>
-                  <Button asChild><Link to="/business">Subscribe Now</Link></Button>
-                </CardContent>
-              </Card>
-            )}
+            <Card className={!hasActiveSubscription ? "border-destructive" : undefined}>
+              <CardHeader><CardTitle>Billing & Subscription</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                {subscription ? (
+                  <>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Status:</span>
+                      <Badge variant={hasActiveSubscription ? "default" : subscription.status === 'past_due' ? "destructive" : "secondary"} className="capitalize">{subscription.status.replace('_', ' ')}</Badge>
+                    </div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Plan:</span><span className="font-medium capitalize">{subscription.plan} · {subscription.billing_cycle}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Price:</span><span className="font-medium">${(subscription.price_cents / 100).toFixed(2)} / {subscription.billing_cycle === 'annual' ? 'mo (billed yearly)' : 'mo'}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Current period ends:</span><span className="font-medium">{new Date(subscription.current_period_end).toLocaleDateString()}</span></div>
+                    {!hasActiveSubscription && (
+                      <div className="pt-3 border-t">
+                        <p className="text-sm text-muted-foreground mb-3">Your subscription is inactive. Contact billing to reactivate.</p>
+                        <Button asChild variant="outline" size="sm"><Link to="/contact">Contact Billing</Link></Button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <p className="text-muted-foreground">No active subscription. Your restaurant needs a subscription ($20/mo) to remain visible to customers.</p>
+                    <Button asChild><Link to="/business">Subscribe Now</Link></Button>
+                  </>
+                )}
+              </CardContent>
+            </Card>
 
             {!isTier2 && (
               <Card>
