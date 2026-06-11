@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from "react";
+import { Helmet } from "react-helmet-async";
 import { RestaurantCard } from "@/components/RestaurantCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -47,8 +48,25 @@ const Restaurants = () => {
     setShowSuggestions(false);
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://redeemr.app/" },
+      { "@type": "ListItem", position: 2, name: "Restaurants", item: "https://redeemr.app/restaurants" },
+    ],
+  };
+
   return (
     <>
+      <Helmet>
+        <title>Find restaurants — Redeemr</title>
+        <meta name="description" content="Browse participating restaurants on Redeemr. Filter by cuisine and location, then collect stamps and earn rewards on every visit." />
+        <link rel="canonical" href="https://redeemr.app/restaurants" />
+        <meta property="og:title" content="Find restaurants on Redeemr" />
+        <meta property="og:url" content="https://redeemr.app/restaurants" />
+        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+      </Helmet>
       <div className="bg-primary text-primary-foreground py-12">
         <div className="container">
           <h1 className="text-3xl font-bold mb-6">Find Restaurants</h1>

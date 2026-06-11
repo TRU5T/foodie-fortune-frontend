@@ -59,7 +59,7 @@ const Index = () => {
         <div className="container absolute inset-0 flex items-center z-20">
           <div className="max-w-xl text-primary-foreground">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Welcome back{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}!
+              Your Rewards Dashboard{profile?.full_name ? ` — Welcome back, ${profile.full_name.split(' ')[0]}` : ''}
             </h1>
             <p className="text-lg mb-6">
               Visit your favourite spots, scan your QR code, and watch your stamps stack up.
