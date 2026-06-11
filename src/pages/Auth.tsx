@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,17 @@ const Auth = () => {
 
   return (
     <div className="flex items-center justify-center py-12">
+      <Helmet>
+        <title>{activeTab === "register" ? "Create your Redeemr account" : "Sign in to Redeemr"}</title>
+        <meta name="description" content="Sign in or create a free Redeemr account to collect stamps and earn rewards at your favourite restaurants." />
+        <link rel="canonical" href="https://redeemr.app/auth" />
+        <meta property="og:title" content={activeTab === "register" ? "Create your Redeemr account" : "Sign in to Redeemr"} />
+        <meta property="og:url" content="https://redeemr.app/auth" />
+      </Helmet>
       <div className="w-full max-w-md px-4">
+        <h1 className="text-3xl font-bold text-center mb-6">
+          {activeTab === "register" ? "Create your account" : "Sign in to Redeemr"}
+        </h1>
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "login" | "register")}>
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="login">Login</TabsTrigger>

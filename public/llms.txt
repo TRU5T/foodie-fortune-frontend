@@ -1,0 +1,19 @@
+# Redeemr
+
+> Digital loyalty and rewards for restaurants. Customers collect stamps or points by scanning a QR code at participating venues and redeem them for free items, discounts, and perks.
+
+Redeemr replaces paper punch cards with a phone-based stamp and points system. Restaurants run their loyalty programme from a vendor dashboard; customers track every card from one wallet view.
+
+## Pages
+
+- [Home](/): Overview of how Redeemr works and featured restaurants.
+- [Restaurants](/restaurants): Browse participating restaurants, filter by cuisine and location.
+- [Rewards](/rewards): Available rewards customers can redeem.
+- [For Businesses](/business): Vendor subscription information and pricing.
+- [FAQ](/faq): Common questions about earning, redeeming, QR scanning, and vendor onboarding.
+- [Contact](/contact): Get in touch with the Redeemr team.
+
+## Optional
+
+- [Terms](/terms): Terms of service.
+- [Privacy](/privacy): Privacy policy.

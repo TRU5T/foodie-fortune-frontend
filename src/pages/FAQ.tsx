@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import {
   Accordion,
   AccordionContent,
@@ -90,8 +91,28 @@ const faqs = [
 ];
 
 const FAQ = () => {
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.flatMap((section) =>
+      section.items.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      }))
+    ),
+  };
+
   return (
     <div className="container py-10 max-w-3xl">
+      <Helmet>
+        <title>FAQ — Redeemr Loyalty & Rewards</title>
+        <meta name="description" content="Answers to common questions about earning stamps, redeeming rewards, QR scanning, and using Redeemr at participating restaurants." />
+        <link rel="canonical" href="https://redeemr.app/faq" />
+        <meta property="og:title" content="Redeemr FAQ" />
+        <meta property="og:url" content="https://redeemr.app/faq" />
+        <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
+      </Helmet>
       <h1 className="text-3xl font-bold mb-2">Frequently Asked Questions</h1>
       <p className="text-muted-foreground mb-8">
         Find answers to common questions about using Redeemr.

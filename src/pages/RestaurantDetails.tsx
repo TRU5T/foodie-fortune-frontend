@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { FoodItemCard } from "@/components/FoodItemCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -66,8 +67,46 @@ const RestaurantDetails = () => {
     }
   };
 
+  const canonical = `https://redeemr.app/restaurant/${restaurant.id}`;
+  const restaurantJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    name: restaurant.name,
+    image: restaurant.image,
+    description: restaurant.description,
+    address: restaurant.address,
+    servesCuisine: restaurant.cuisine,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: restaurant.rating,
+      reviewCount: 1,
+    },
+    url: canonical,
+  };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://redeemr.app/" },
+      { "@type": "ListItem", position: 2, name: "Restaurants", item: "https://redeemr.app/restaurants" },
+      { "@type": "ListItem", position: 3, name: restaurant.name, item: canonical },
+    ],
+  };
+
   return (
     <>
+      <Helmet>
+        <title>{`${restaurant.name} — Loyalty & Rewards on Redeemr`}</title>
+        <meta name="description" content={`${restaurant.description} Earn ${restaurant.pointsPerDollar}x points on every order at ${restaurant.name}.`} />
+        <link rel="canonical" href={canonical} />
+        <meta property="og:title" content={`${restaurant.name} on Redeemr`} />
+        <meta property="og:description" content={restaurant.description} />
+        <meta property="og:url" content={canonical} />
+        <meta property="og:image" content={restaurant.image} />
+        <meta property="og:type" content="restaurant" />
+        <script type="application/ld+json">{JSON.stringify(restaurantJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+      </Helmet>
       {/* Back button */}
       <div className="container pt-4">
         <Button variant="ghost" size="sm" asChild>

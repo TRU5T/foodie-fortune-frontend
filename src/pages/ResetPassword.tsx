@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -83,7 +84,13 @@ const ResetPassword = () => {
 
   return (
     <div className="flex items-center justify-center py-12">
+      <Helmet>
+        <title>Set a new password — Redeemr</title>
+        <meta name="description" content="Choose a new password to regain access to your Redeemr account." />
+        <link rel="canonical" href="https://redeemr.app/reset-password" />
+      </Helmet>
       <div className="w-full max-w-md px-4">
+        <h1 className="text-3xl font-bold text-center mb-6">Set a new password</h1>
         <Card>
           <CardHeader>
             <CardTitle>Set a new password</CardTitle>
