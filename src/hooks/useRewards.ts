@@ -39,12 +39,8 @@ export const useUserRewards = () => {
   const redeemReward = useMutation({
     mutationFn: async (rewardId: string) => {
       if (!user) throw new Error('User not authenticated');
-      
-      const { data, error } = await supabase
-        .from('user_rewards')
-        .insert([{ user_id: user.id, reward_id: rewardId, is_redeemed: false }])
-        .select()
-        .single();
+
+      const { data, error } = await supabase.rpc('redeem_reward', { _reward_id: rewardId });
       if (error) throw error;
       return data;
     },
