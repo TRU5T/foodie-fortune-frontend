@@ -751,6 +751,23 @@ export type Database = {
         }
         Returns: boolean
       }
+      redeem_reward: {
+        Args: { _reward_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          is_redeemed: boolean
+          redeemed_at: string | null
+          reward_id: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_rewards"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       app_role: "customer" | "vendor" | "admin"
