@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { ShoppingCart, User, Menu, Stamp, QrCode, Award, UtensilsCrossed, Home } from "lucide-react";
+import { ShoppingCart, User, Menu, Stamp, QrCode, Award, UtensilsCrossed, Home, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
