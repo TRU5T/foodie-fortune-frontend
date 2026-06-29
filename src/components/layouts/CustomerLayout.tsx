@@ -104,14 +104,14 @@ const CustomerNavbar = () => {
               {user && <NotificationBell />}
               {user && <RoleSwitcher />}
               {user ? (
-                <Button asChild size="sm">
+                <Button asChild size="sm" className="rounded-full bg-[#f97316] text-white hover:bg-[#f97316]/90 px-5">
                   <Link to="/profile">
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </Link>
                 </Button>
               ) : (
-                <Button asChild size="sm">
+                <Button asChild size="sm" className="rounded-full bg-[#f97316] text-white hover:bg-[#f97316]/90 px-5">
                   <Link to="/auth">Sign In</Link>
                 </Button>
               )}
