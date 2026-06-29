@@ -125,7 +125,7 @@ export const LandingPage = () => {
 
 
       {/* For Business Owners Section */}
-      <section className="py-20 bg-muted">
+      <section className="py-24 bg-[#fafaf9]">
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
