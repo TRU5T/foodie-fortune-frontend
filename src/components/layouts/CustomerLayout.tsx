@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { ShoppingCart, User, Menu, Stamp, QrCode, Award, UtensilsCrossed, Home } from "lucide-react";
+import { ShoppingCart, User, Menu, Stamp, QrCode, Award, UtensilsCrossed, Home, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -29,13 +29,13 @@ const CustomerNavbar = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-100 shadow-sm">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="font-bold text-primary-foreground text-sm">RD</span>
+          <span className="h-8 w-8 rounded-full bg-[#f97316]/10 flex items-center justify-center">
+            <Flame className="h-5 w-5 text-[#f97316]" />
           </span>
-          <span className="font-bold text-xl">Redeemr</span>
+          <span className="font-bold text-xl text-[#111827]">Redeemr</span>
         </Link>
 
         {isMobile ? (
@@ -92,8 +92,8 @@ const CustomerNavbar = () => {
                   key={link.to}
                   to={link.to}
                   end={link.end}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                  activeClassName="text-primary bg-primary/5 font-medium"
+                  className="group relative flex items-center gap-1.5 px-3 py-2 text-sm text-[#111827] transition-colors after:content-[''] after:absolute after:left-3 after:right-3 after:bottom-1 after:h-[2px] after:bg-[#f97316] after:scale-x-0 after:origin-left after:transition-transform hover:after:scale-x-100"
+                  activeClassName="text-[#f97316] font-semibold after:scale-x-100"
                 >
                   <link.icon className="h-4 w-4" />
                   {link.label}
@@ -104,14 +104,14 @@ const CustomerNavbar = () => {
               {user && <NotificationBell />}
               {user && <RoleSwitcher />}
               {user ? (
-                <Button asChild size="sm">
+                <Button asChild size="sm" className="rounded-full bg-[#f97316] text-white hover:bg-[#f97316]/90 px-5">
                   <Link to="/profile">
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </Link>
                 </Button>
               ) : (
-                <Button asChild size="sm">
+                <Button asChild size="sm" className="rounded-full bg-[#f97316] text-white hover:bg-[#f97316]/90 px-5">
                   <Link to="/auth">Sign In</Link>
                 </Button>
               )}
