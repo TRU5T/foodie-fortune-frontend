@@ -92,8 +92,8 @@ const CustomerNavbar = () => {
                   key={link.to}
                   to={link.to}
                   end={link.end}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                  activeClassName="text-primary bg-primary/5 font-medium"
+                  className="group relative flex items-center gap-1.5 px-3 py-2 text-sm text-[#111827] transition-colors after:content-[''] after:absolute after:left-3 after:right-3 after:bottom-1 after:h-[2px] after:bg-[#f97316] after:scale-x-0 after:origin-left after:transition-transform hover:after:scale-x-100"
+                  activeClassName="text-[#f97316] font-semibold after:scale-x-100"
                 >
                   <link.icon className="h-4 w-4" />
                   {link.label}
