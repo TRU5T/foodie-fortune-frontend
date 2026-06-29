@@ -9,27 +9,29 @@ export const LandingPage = () => {
     <>
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-secondary/90 z-10" />
+        <div className="absolute inset-0 bg-black/60 z-10" />
         <div className="relative h-[600px] bg-[url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2574&auto=format&fit=crop')] bg-cover bg-center" />
-        <div className="container absolute inset-0 flex items-center z-20">
-          <div className="max-w-2xl text-primary-foreground">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
+        <div className="absolute inset-0 flex items-center z-20">
+          <div className="max-w-2xl pl-8 sm:pl-16 md:pl-24 pr-6 text-white">
+            <div className="h-[3px] w-12 rounded-full bg-[#f97316] mb-6" />
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-[1.05] text-white">
               Loyalty Made Simple
             </h1>
-            <p className="text-lg sm:text-xl mb-8 leading-relaxed">
+            <p className="text-base sm:text-lg mb-8 leading-relaxed text-gray-200">
               Redeemr replaces paper punch cards with a digital stamp system. Visit your favourite spots, scan a QR code, collect stamps, and unlock real rewards — all from your phone.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" variant="secondary">
+              <Button asChild size="lg" className="rounded-full bg-[#f97316] text-[#111827] hover:bg-[#f97316]/90 px-7 font-semibold">
                 <Link to="/auth?tab=register">Get Started Free</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-primary-foreground text-primary-foreground bg-transparent hover:bg-primary-foreground/10 hover:text-primary-foreground">
+              <Button asChild size="lg" variant="ghost" className="rounded-full border border-white text-white bg-transparent hover:bg-white/10 hover:text-white px-7">
                 <Link to="/business">For Businesses</Link>
               </Button>
             </div>
           </div>
         </div>
       </section>
+
 
       {/* How It Works Section */}
       <section className="py-20 bg-background">
