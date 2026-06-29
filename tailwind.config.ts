@@ -63,11 +63,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for our food rewards app
+				// Brand palette
 				brand: {
-					orange: "#F97316", // Primary
-					blue: "#1E3A8A",   // Secondary
-					green: "#4ADE80",  // Accent
+					orange: "#F97316", // Primary amber accent
+					charcoal: "#111827", // Secondary dark charcoal
+					cream: "#FAFAF9",  // Warm off-white background
 				}
 			},
 			borderRadius: {
