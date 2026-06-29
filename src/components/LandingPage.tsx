@@ -34,133 +34,98 @@ export const LandingPage = () => {
 
 
       {/* How It Works Section */}
-      <section className="py-20 bg-background">
+      <section className="py-24 bg-white">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">How It Works</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold tracking-tight mb-4 text-[#111827]">How It Works</h2>
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
               Three simple steps to start earning rewards
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-card p-8 rounded-xl border shadow-sm text-center">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-                <UtensilsCrossed className="h-8 w-8 text-primary" />
+            {[
+              { Icon: UtensilsCrossed, title: "1. Visit", body: "Head to any participating café, restaurant, or takeaway near you." },
+              { Icon: QrCode, title: "2. Collect Stamps", body: "Show your QR code when ordering to collect stamps and earn points automatically." },
+              { Icon: Gift, title: "3. Redeem Rewards", body: "Use your stamps and points for free meals, discounts, and exclusive perks." },
+            ].map(({ Icon, title, body }) => (
+              <div key={title} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
+                <div className="w-12 h-12 mx-auto mb-6 rounded-full bg-[#f97316]/10 flex items-center justify-center">
+                  <Icon className="h-6 w-6 text-[#f97316]" />
+                </div>
+                <h3 className="text-xl font-bold tracking-tight mb-3 text-[#111827]">{title}</h3>
+                <p className="text-gray-500">{body}</p>
               </div>
-              <h3 className="text-2xl font-semibold mb-3">1. Visit</h3>
-              <p className="text-muted-foreground">
-                Head to any participating café, restaurant, or takeaway near you.
-              </p>
-            </div>
-            <div className="bg-card p-8 rounded-xl border shadow-sm text-center">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-accent/10 flex items-center justify-center">
-                <QrCode className="h-8 w-8 text-accent" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-3">2. Collect Stamps</h3>
-              <p className="text-muted-foreground">
-                Show your QR code when ordering to collect stamps and earn points automatically.
-              </p>
-            </div>
-            <div className="bg-card p-8 rounded-xl border shadow-sm text-center">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-secondary/10 flex items-center justify-center">
-                <Gift className="h-8 w-8 text-secondary" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-3">3. Redeem Rewards</h3>
-              <p className="text-muted-foreground">
-                Use your stamps and points for free meals, discounts, and exclusive perks.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-muted">
+      <section className="py-24 bg-[#fafaf9]">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Why Choose Redeemr?</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold tracking-tight mb-4 text-[#111827]">Why Choose Redeemr?</h2>
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
               The smarter way to reward loyal customers
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-card p-6 rounded-lg border">
-              <Trophy className="h-10 w-10 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Earn With Every Visit</h3>
-              <p className="text-muted-foreground">
-                Collect stamps each time you visit and unlock rewards when your card is full.
-              </p>
-            </div>
-            <div className="bg-card p-6 rounded-lg border">
-              <CreditCard className="h-10 w-10 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Digital Stamp Cards</h3>
-              <p className="text-muted-foreground">
-                No more lost paper cards — your stamps live on your phone, always with you.
-              </p>
-            </div>
-            <div className="bg-card p-6 rounded-lg border">
-              <Clock className="h-10 w-10 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Quick QR Scan</h3>
-              <p className="text-muted-foreground">
-                Show your QR code at the till. One scan, stamp collected — done in seconds.
-              </p>
-            </div>
+            {[
+              { Icon: Trophy, title: "Earn With Every Visit", body: "Collect stamps each time you visit and unlock rewards when your card is full." },
+              { Icon: CreditCard, title: "Digital Stamp Cards", body: "No more lost paper cards — your stamps live on your phone, always with you." },
+              { Icon: Clock, title: "Quick QR Scan", body: "Show your QR code at the till. One scan, stamp collected — done in seconds." },
+            ].map(({ Icon, title, body }) => (
+              <div key={title} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="w-10 h-10 mb-4 rounded-full bg-[#f97316]/10 flex items-center justify-center">
+                  <Icon className="h-5 w-5 text-[#f97316]" />
+                </div>
+                <h3 className="text-xl font-bold tracking-tight mb-2 text-[#111827]">{title}</h3>
+                <p className="text-gray-500">{body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Coming Soon / Launching Section */}
-      <section className="py-20 bg-background">
+      <section className="py-24 bg-white">
         <div className="container">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 bg-[#f97316]/10 text-[#f97316] px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Rocket className="h-4 w-4" />
               Launching Soon
             </div>
-            <h2 className="text-4xl font-bold mb-4">Restaurants Are Joining</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold tracking-tight mb-4 text-[#111827]">Restaurants Are Joining</h2>
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
               We're onboarding the best local restaurants in your area. Be the first to know when your favorites go live.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div className="bg-muted/50 border border-dashed border-border rounded-xl p-8 text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                <Store className="h-7 w-7 text-primary" />
+            {[
+              { Icon: Store, title: "Local Favourites", body: "Your go-to cafés, restaurants, and takeaways — all with loyalty built in." },
+              { Icon: QrCode, title: "Scan & Stamp", body: "One scan per visit. Watch your stamps stack up and rewards unlock." },
+              { Icon: Bell, title: "Get Notified", body: "Sign up now and we'll let you know the moment restaurants near you go live." },
+            ].map(({ Icon, title, body }) => (
+              <div key={title} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#f97316]/10 flex items-center justify-center">
+                  <Icon className="h-6 w-6 text-[#f97316]" />
+                </div>
+                <h3 className="text-lg font-bold tracking-tight mb-2 text-[#111827]">{title}</h3>
+                <p className="text-gray-500 text-sm">{body}</p>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Local Favourites</h3>
-              <p className="text-muted-foreground text-sm">
-                Your go-to cafés, restaurants, and takeaways — all with loyalty built in.
-              </p>
-            </div>
-            <div className="bg-muted/50 border border-dashed border-border rounded-xl p-8 text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-accent/10 flex items-center justify-center">
-                <QrCode className="h-7 w-7 text-accent" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Scan & Stamp</h3>
-              <p className="text-muted-foreground text-sm">
-                One scan per visit. Watch your stamps stack up and rewards unlock.
-              </p>
-            </div>
-            <div className="bg-muted/50 border border-dashed border-border rounded-xl p-8 text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-secondary/10 flex items-center justify-center">
-                <Bell className="h-7 w-7 text-secondary" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Get Notified</h3>
-              <p className="text-muted-foreground text-sm">
-                Sign up now and we'll let you know the moment restaurants near you go live.
-              </p>
-            </div>
+            ))}
           </div>
           <div className="text-center">
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="rounded-full bg-[#f97316] text-white hover:bg-[#f97316]/90 px-7">
               <Link to="/auth?tab=register">Join the Waitlist</Link>
             </Button>
           </div>
         </div>
       </section>
 
+
       {/* For Business Owners Section */}
-      <section className="py-20 bg-muted">
+      <section className="py-24 bg-[#fafaf9]">
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
