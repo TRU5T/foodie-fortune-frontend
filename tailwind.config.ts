@@ -65,9 +65,14 @@ export default {
 				},
 				// Brand palette
 				brand: {
-					orange: "#F97316", // Primary amber accent
-					charcoal: "#111827", // Secondary dark charcoal
-					cream: "#FAFAF9",  // Warm off-white background
+					orange: "#F97316",
+					"orange-hover": "#EA6C0A",
+					charcoal: "#1C1917",
+					cream: "#FAFAF7",
+					border: "#E7E5E4",
+					muted: "#78716C",
+					body: "#44403C",
+					surface: "#292524",
 				}
 			},
 			borderRadius: {
