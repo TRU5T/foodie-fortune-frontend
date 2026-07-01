@@ -1,56 +1,114 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift, Store, Rocket, Bell } from "lucide-react";
+import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift, Store, Rocket, Bell, Check } from "lucide-react";
+
+const StampCardMockup = () => {
+  const filled = 6;
+  const total = 10;
+  return (
+    <div className="rounded-[14px] p-4 bg-[#292524] border border-[#44403C] shadow-2xl w-full max-w-sm">
+      <div className="flex items-start justify-between mb-4">
+        <div>
+          <p className="text-white text-[13px] font-bold tracking-tight">Corner Café</p>
+          <p className="text-[#A8A29E] text-[10px] uppercase tracking-[0.08em] mt-0.5">Downtown · Loyalty</p>
+        </div>
+        <div className="text-[#F97316] text-[13px] font-bold tabular-nums">{filled}/{total}</div>
+      </div>
+      <div className="grid grid-cols-5 gap-2 mb-4">
+        {Array.from({ length: total }).map((_, i) => (
+          <div
+            key={i}
+            className={`h-7 w-7 rounded-full flex items-center justify-center transition-all duration-200 ${
+              i < filled
+                ? "bg-[#F97316]"
+                : "border border-[#57534E] bg-transparent"
+            }`}
+          >
+            {i < filled && <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />}
+          </div>
+        ))}
+      </div>
+      <p className="text-[#A8A29E] text-[11px] tracking-[0.03em]">
+        {total - filled} stamps until your next reward
+      </p>
+    </div>
+  );
+};
 
 export const LandingPage = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/60 z-10" />
-        <div className="relative h-[600px] bg-[url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2574&auto=format&fit=crop')] bg-cover bg-center" />
-        <div className="absolute inset-0 flex items-center z-20">
-          <div className="max-w-2xl pl-8 sm:pl-16 md:pl-24 pr-6 text-white">
-            <div className="h-[3px] w-12 rounded-full bg-[#f97316] mb-6" />
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-[1.05] text-white">
-              Loyalty Made Simple
-            </h1>
-            <p className="text-base sm:text-lg mb-8 leading-relaxed text-gray-200">
-              Redeemr replaces paper punch cards with a digital stamp system. Visit your favourite spots, scan a QR code, collect stamps, and unlock real rewards — all from your phone.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" className="rounded-full bg-[#f97316] text-[#111827] hover:bg-[#f97316]/90 px-7 font-semibold transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
-                <Link to="/auth?tab=register">Get Started Free</Link>
-              </Button>
-              <Button asChild size="lg" variant="ghost" className="rounded-full border border-white text-white bg-transparent hover:bg-white/10 hover:text-white px-7 transition-all duration-200">
-                <Link to="/business">For Businesses</Link>
-              </Button>
+      <section className="w-full bg-[#1C1917]">
+        <div className="container py-20 lg:py-28">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="eyebrow mb-6">Digital Loyalty, Reimagined</span>
+              <h1 className="text-white text-4xl sm:text-5xl lg:text-6xl font-bold mt-6 mb-6">
+                Loyalty Made <span className="text-[#F97316]">Simple</span>
+              </h1>
+              <p className="text-[#A8A29E] text-base sm:text-lg mb-8 max-w-xl" style={{ lineHeight: 1.7 }}>
+                Redeemr replaces paper punch cards with a digital stamp system. Visit your favourite spots, scan a QR code, collect stamps, and unlock real rewards — all from your phone.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Button asChild size="lg" className="rounded-full bg-[#F97316] text-white hover:bg-[#EA6C0A] px-7 font-semibold transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+                  <Link to="/auth?tab=register">Get Started Free</Link>
+                </Button>
+                <Button asChild size="lg" variant="ghost" className="rounded-full border border-[#44403C] text-[#E7E5E4] bg-transparent hover:bg-white/5 hover:text-white px-7 transition-all duration-200">
+                  <Link to="/business">For Businesses</Link>
+                </Button>
+              </div>
+            </div>
+            <div className="flex justify-center lg:justify-end">
+              <StampCardMockup />
             </div>
           </div>
         </div>
       </section>
 
+      {/* Stat Bar */}
+      <section className="bg-white border-b border-[#E7E5E4]">
+        <div className="container py-10">
+          <div className="grid grid-cols-3 divide-x divide-[#E7E5E4]">
+            {[
+              { num: "12k", suffix: "+", label: "Active customers" },
+              { num: "340", suffix: "+", label: "Restaurants" },
+              { num: "94", suffix: "%", label: "Return rate" },
+            ].map((s) => (
+              <div key={s.label} className="text-center px-4">
+                <div className="text-3xl sm:text-4xl font-bold text-[#1C1917] tracking-tight">
+                  {s.num}<span className="text-[#F97316]">{s.suffix}</span>
+                </div>
+                <div className="text-[11px] sm:text-xs uppercase tracking-[0.08em] text-[#78716C] mt-2 font-medium">
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-[#FAFAF7]">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold tracking-tight mb-4 text-[#111827]">How It Works</h2>
-            <p className="text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-[#1C1917]">How It Works</h2>
+            <p className="text-[#78716C] max-w-2xl mx-auto" style={{ lineHeight: 1.7 }}>
               Three simple steps to start earning rewards
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { Icon: UtensilsCrossed, title: "1. Visit", body: "Head to any participating café, restaurant, or takeaway near you." },
               { Icon: QrCode, title: "2. Collect Stamps", body: "Show your QR code when ordering to collect stamps and earn points automatically." },
               { Icon: Gift, title: "3. Redeem Rewards", body: "Use your stamps and points for free meals, discounts, and exclusive perks." },
             ].map(({ Icon, title, body }) => (
-              <div key={title} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-                <div className="w-12 h-12 mx-auto mb-6 rounded-full bg-[#f97316]/10 flex items-center justify-center">
-                  <Icon className="h-6 w-6 text-[#f97316]" />
+              <div key={title} className="bg-white p-5 rounded-xl border border-[#E7E5E4] transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                <div className="w-8 h-8 mb-4 rounded-lg bg-[#FFF7ED] flex items-center justify-center">
+                  <Icon className="h-4 w-4 text-[#F97316]" />
                 </div>
-                <h3 className="text-xl font-bold tracking-tight mb-3 text-[#111827]">{title}</h3>
-                <p className="text-gray-500 leading-relaxed">{body}</p>
+                <h3 className="text-sm font-medium text-[#1C1917] mb-2">{title}</h3>
+                <p className="text-xs text-[#78716C]" style={{ lineHeight: 1.7 }}>{body}</p>
               </div>
             ))}
           </div>
@@ -58,26 +116,26 @@ export const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-[#fafaf9]">
+      <section className="py-24 bg-white">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold tracking-tight mb-4 text-[#111827]">Why Choose Redeemr?</h2>
-            <p className="text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-[#1C1917]">Why Choose Redeemr?</h2>
+            <p className="text-[#78716C] max-w-2xl mx-auto" style={{ lineHeight: 1.7 }}>
               The smarter way to reward loyal customers
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { Icon: Trophy, title: "Earn With Every Visit", body: "Collect stamps each time you visit and unlock rewards when your card is full." },
               { Icon: CreditCard, title: "Digital Stamp Cards", body: "No more lost paper cards — your stamps live on your phone, always with you." },
               { Icon: Clock, title: "Quick QR Scan", body: "Show your QR code at the till. One scan, stamp collected — done in seconds." },
             ].map(({ Icon, title, body }) => (
-              <div key={title} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-                <div className="w-10 h-10 mb-4 rounded-full bg-[#f97316]/10 flex items-center justify-center">
-                  <Icon className="h-5 w-5 text-[#f97316]" />
+              <div key={title} className="bg-white p-5 rounded-xl border border-[#E7E5E4] transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                <div className="w-8 h-8 mb-4 rounded-lg bg-[#FFF7ED] flex items-center justify-center">
+                  <Icon className="h-4 w-4 text-[#F97316]" />
                 </div>
-                <h3 className="text-xl font-bold tracking-tight mb-2 text-[#111827]">{title}</h3>
-                <p className="text-gray-500 leading-relaxed">{body}</p>
+                <h3 className="text-sm font-medium text-[#1C1917] mb-2">{title}</h3>
+                <p className="text-xs text-[#78716C]" style={{ lineHeight: 1.7 }}>{body}</p>
               </div>
             ))}
           </div>
@@ -85,35 +143,35 @@ export const LandingPage = () => {
       </section>
 
       {/* Coming Soon / Launching Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-[#FAFAF7]">
         <div className="container">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-[#f97316]/10 text-[#f97316] px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <Rocket className="h-4 w-4" />
+            <span className="eyebrow mb-6">
+              <Rocket className="h-3 w-3" />
               Launching Soon
-            </div>
-            <h2 className="text-4xl font-bold tracking-tight mb-4 text-[#111827]">Restaurants Are Joining</h2>
-            <p className="text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto">
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold mt-6 mb-4 text-[#1C1917]">Restaurants Are Joining</h2>
+            <p className="text-[#78716C] max-w-2xl mx-auto" style={{ lineHeight: 1.7 }}>
               We're onboarding the best local restaurants in your area. Be the first to know when your favourites go live.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {[
               { Icon: Store, title: "Local Favourites", body: "Your go-to cafés, restaurants, and takeaways — all with loyalty built in." },
               { Icon: QrCode, title: "Scan & Stamp", body: "One scan per visit. Watch your stamps stack up and rewards unlock." },
               { Icon: Bell, title: "Get Notified", body: "Sign up now and we'll let you know the moment restaurants near you go live." },
             ].map(({ Icon, title, body }) => (
-              <div key={title} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#f97316]/10 flex items-center justify-center">
-                  <Icon className="h-6 w-6 text-[#f97316]" />
+              <div key={title} className="bg-white p-5 rounded-xl border border-[#E7E5E4] transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                <div className="w-8 h-8 mb-4 rounded-lg bg-[#FFF7ED] flex items-center justify-center">
+                  <Icon className="h-4 w-4 text-[#F97316]" />
                 </div>
-                <h3 className="text-lg font-bold tracking-tight mb-2 text-[#111827]">{title}</h3>
-                <p className="text-gray-500 leading-relaxed text-sm">{body}</p>
+                <h3 className="text-sm font-medium text-[#1C1917] mb-2">{title}</h3>
+                <p className="text-xs text-[#78716C]" style={{ lineHeight: 1.7 }}>{body}</p>
               </div>
             ))}
           </div>
           <div className="text-center">
-            <Button asChild size="lg" className="rounded-full bg-[#f97316] text-white hover:bg-[#f97316]/90 px-7 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+            <Button asChild size="lg" className="rounded-full bg-[#F97316] text-white hover:bg-[#EA6C0A] px-7 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
               <Link to="/auth?tab=register">Join the Waitlist</Link>
             </Button>
           </div>
@@ -121,13 +179,13 @@ export const LandingPage = () => {
       </section>
 
       {/* For Business Owners Section */}
-      <section className="py-24 bg-[#fafaf9]">
+      <section className="py-24 bg-white">
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="h-[3px] w-12 rounded-full bg-[#f97316] mb-6" />
-              <h2 className="text-4xl font-bold tracking-tight mb-4 text-[#111827]">Own a Restaurant?</h2>
-              <p className="text-lg text-gray-500 leading-relaxed mb-6">
+              <div className="h-[3px] w-12 rounded-full bg-[#F97316] mb-6" />
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-[#1C1917]">Own a Restaurant?</h2>
+              <p className="text-[#44403C] mb-6" style={{ lineHeight: 1.7 }}>
                 Redeemr gives you a digital loyalty programme your customers will actually use. No apps to download, no plastic cards — just a simple QR scan.
               </p>
               <ul className="space-y-4 mb-8">
@@ -137,62 +195,37 @@ export const LandingPage = () => {
                   { Icon: Clock, text: "Get set up in under 5 minutes — free to start" },
                 ].map(({ Icon, text }) => (
                   <li key={text} className="flex items-start gap-3">
-                    <div className="mt-1 w-6 h-6 rounded-full bg-[#f97316]/10 flex items-center justify-center shrink-0">
-                      <Icon className="h-3.5 w-3.5 text-[#f97316]" />
+                    <div className="mt-0.5 w-6 h-6 rounded-lg bg-[#FFF7ED] flex items-center justify-center shrink-0">
+                      <Icon className="h-3.5 w-3.5 text-[#F97316]" />
                     </div>
-                    <span className="text-gray-500 leading-relaxed">{text}</span>
+                    <span className="text-sm text-[#44403C]" style={{ lineHeight: 1.7 }}>{text}</span>
                   </li>
                 ))}
               </ul>
-              <Button asChild size="lg" className="rounded-full bg-[#f97316] text-white hover:bg-[#f97316]/90 px-7 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+              <Button asChild size="lg" className="rounded-full bg-[#F97316] text-white hover:bg-[#EA6C0A] px-7 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
                 <Link to="/business">Learn More</Link>
               </Button>
             </div>
-            <div className="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 p-4 bg-[#fafaf9] rounded-xl">
-                  <div className="w-10 h-10 rounded-full bg-[#f97316]/15 flex items-center justify-center">
-                    <Store className="h-5 w-5 text-[#f97316]" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-sm text-[#111827]">Your Restaurant</p>
-                    <p className="text-xs text-gray-500">Stamp card active · 3 rewards</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-5 gap-2">
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={`aspect-square rounded-lg flex items-center justify-center text-lg transition-all duration-200 ${
-                        i < 6
-                          ? "bg-[#f97316]/15 text-[#f97316]"
-                          : "bg-[#fafaf9] text-gray-300"
-                      }`}
-                    >
-                      {i < 6 ? "★" : "☆"}
-                    </div>
-                  ))}
-                </div>
-                <p className="text-center text-sm text-gray-500">6 / 10 stamps collected</p>
-              </div>
+            <div className="flex justify-center lg:justify-end">
+              <StampCardMockup />
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-[#111827] text-white">
+      <section className="py-24 bg-[#1C1917]">
         <div className="container text-center">
-          <div className="h-[3px] w-12 rounded-full bg-[#f97316] mb-6 mx-auto" />
-          <h2 className="text-4xl font-bold tracking-tight mb-6 text-white">Ready to Start Earning Rewards?</h2>
-          <p className="text-lg leading-relaxed mb-8 max-w-2xl mx-auto text-gray-300">
+          <span className="eyebrow mb-6">Get Started</span>
+          <h2 className="text-3xl sm:text-4xl font-bold mt-6 mb-6 text-white">Ready to Start Earning Rewards?</h2>
+          <p className="mb-8 max-w-2xl mx-auto text-[#A8A29E]" style={{ lineHeight: 1.7 }}>
             Join our community of food lovers and start collecting rewards with every meal today.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" className="rounded-full bg-[#f97316] text-white hover:bg-[#f97316]/90 px-7 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button asChild size="lg" className="rounded-full bg-[#F97316] text-white hover:bg-[#EA6C0A] px-7 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
               <Link to="/auth?tab=register">Sign Up Now</Link>
             </Button>
-            <Button asChild size="lg" variant="ghost" className="rounded-full border border-white/30 text-white bg-transparent hover:bg-white/10 hover:text-white px-7 transition-all duration-200">
+            <Button asChild size="lg" variant="ghost" className="rounded-full border border-[#44403C] text-[#E7E5E4] bg-transparent hover:bg-white/5 hover:text-white px-7 transition-all duration-200">
               <Link to="/auth">Sign In</Link>
             </Button>
           </div>
