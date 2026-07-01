@@ -40,14 +40,14 @@ export const LandingPage = () => {
     <>
       {/* Hero Section */}
       <section className="w-full bg-[#1C1917]">
-        <div className="container py-20 lg:py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="container py-12 lg:py-28">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
             <div>
-              <span className="eyebrow mb-6">Digital Loyalty, Reimagined</span>
-              <h1 className="text-white text-4xl sm:text-5xl lg:text-6xl font-bold mt-6 mb-6">
+              <span className="eyebrow mb-4 lg:mb-6">Digital Loyalty, Reimagined</span>
+              <h1 className="text-white text-3xl sm:text-5xl lg:text-6xl font-bold mt-4 lg:mt-6 mb-4 lg:mb-6">
                 Loyalty Made <span className="text-[#F97316]">Simple</span>
               </h1>
-              <p className="text-[#A8A29E] text-base sm:text-lg mb-8 max-w-xl" style={{ lineHeight: 1.7 }}>
+              <p className="text-[#A8A29E] text-sm sm:text-lg mb-6 lg:mb-8 max-w-xl" style={{ lineHeight: 1.7 }}>
                 Redeemr replaces paper punch cards with a digital stamp system. Visit your favourite spots, scan a QR code, collect stamps, and unlock real rewards — all from your phone.
               </p>
               <div className="flex flex-wrap items-center gap-4">
@@ -71,18 +71,18 @@ export const LandingPage = () => {
 
       {/* Stat Bar */}
       <section className="bg-white border-b border-[#E7E5E4]">
-        <div className="container py-10">
+        <div className="container py-8 lg:py-10">
           <div className="grid grid-cols-3 divide-x divide-[#E7E5E4]">
             {[
-              { num: "12k", suffix: "+", label: "Active customers" },
+              { num: "12k", suffix: "+", label: "Customers" },
               { num: "340", suffix: "+", label: "Restaurants" },
               { num: "94", suffix: "%", label: "Return rate" },
             ].map((s) => (
-              <div key={s.label} className="text-center px-4">
-                <div className="text-3xl sm:text-4xl font-bold text-[#1C1917] tracking-tight">
+              <div key={s.label} className="text-center px-2 sm:px-4">
+                <div className="text-2xl sm:text-4xl font-bold text-[#1C1917] tracking-tight">
                   {s.num}<span className="text-[#F97316]">{s.suffix}</span>
                 </div>
-                <div className="text-[11px] sm:text-xs uppercase tracking-[0.08em] text-[#78716C] mt-2 font-medium">
+                <div className="text-[10px] sm:text-xs uppercase tracking-[0.08em] text-[#78716C] mt-2 font-medium whitespace-nowrap">
                   {s.label}
                 </div>
               </div>
@@ -92,11 +92,11 @@ export const LandingPage = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-24 bg-[#FAFAF7]">
+      <section className="py-16 lg:py-24 bg-[#FAFAF7]">
         <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-[#1C1917]">How It Works</h2>
-            <p className="text-[#78716C] max-w-2xl mx-auto" style={{ lineHeight: 1.7 }}>
+          <div className="text-center mb-10 lg:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-3 lg:mb-4 text-[#1C1917]">How It Works</h2>
+            <p className="text-sm sm:text-base text-[#78716C] max-w-2xl mx-auto" style={{ lineHeight: 1.7 }}>
               Three simple steps to start earning rewards
             </p>
           </div>
