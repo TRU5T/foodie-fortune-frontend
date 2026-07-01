@@ -217,11 +217,11 @@ export const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-[#1C1917]">
+      <section className="py-16 lg:py-24 bg-[#1C1917]">
         <div className="container text-center">
-          <span className="eyebrow mb-6">Get Started</span>
-          <h2 className="text-3xl sm:text-4xl font-bold mt-6 mb-6 text-white">Ready to Start Earning Rewards?</h2>
-          <p className="mb-8 max-w-2xl mx-auto text-[#A8A29E]" style={{ lineHeight: 1.7 }}>
+          <span className="eyebrow mb-4 lg:mb-6">Get Started</span>
+          <h2 className="text-2xl sm:text-4xl font-bold mt-4 lg:mt-6 mb-4 lg:mb-6 text-white">Ready to Start Earning Rewards?</h2>
+          <p className="mb-6 lg:mb-8 max-w-2xl mx-auto text-sm sm:text-base text-[#A8A29E]" style={{ lineHeight: 1.7 }}>
             Join our community of food lovers and start collecting rewards with every meal today.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
