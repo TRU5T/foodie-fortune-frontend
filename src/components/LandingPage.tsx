@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift, Store, Rocket, Bell, Check } from "lucide-react";
+import { UtensilsCrossed, Trophy, Clock, CreditCard, QrCode, Gift, Store, Rocket, Bell, Check, ArrowRight } from "lucide-react";
 
 const StampCardMockup = () => {
   const filled = 6;
@@ -50,13 +50,16 @@ export const LandingPage = () => {
               <p className="text-[#A8A29E] text-base sm:text-lg mb-8 max-w-xl" style={{ lineHeight: 1.7 }}>
                 Redeemr replaces paper punch cards with a digital stamp system. Visit your favourite spots, scan a QR code, collect stamps, and unlock real rewards — all from your phone.
               </p>
-              <div className="flex flex-wrap gap-3">
-                <Button asChild size="lg" className="rounded-full bg-[#F97316] text-white hover:bg-[#EA6C0A] px-7 font-semibold transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
-                  <Link to="/auth?tab=register">Get Started Free</Link>
+              <div className="flex flex-wrap items-center gap-4">
+                <Button asChild className="h-10 rounded-[10px] bg-[#F97316] text-white hover:bg-[#EA6C0A] px-5 text-sm font-medium transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+                  <Link to="/auth?tab=register">
+                    Get Started Free
+                    <ArrowRight className="ml-1.5 h-4 w-4" />
+                  </Link>
                 </Button>
-                <Button asChild size="lg" variant="ghost" className="rounded-full border border-[#44403C] text-[#E7E5E4] bg-transparent hover:bg-white/5 hover:text-white px-7 transition-all duration-200">
-                  <Link to="/business">For Businesses</Link>
-                </Button>
+                <Link to="/business" className="text-sm font-normal text-[#A8A29E] hover:text-white hover:underline underline-offset-4 transition-all duration-200">
+                  For Businesses
+                </Link>
               </div>
             </div>
             <div className="flex justify-center lg:justify-end">
