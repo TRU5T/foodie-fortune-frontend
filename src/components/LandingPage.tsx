@@ -119,15 +119,15 @@ export const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-white">
+      <section className="py-16 lg:py-24 bg-white">
         <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-[#1C1917]">Why Choose Redeemr?</h2>
-            <p className="text-[#78716C] max-w-2xl mx-auto" style={{ lineHeight: 1.7 }}>
+          <div className="text-center mb-10 lg:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-3 lg:mb-4 text-[#1C1917]">Why Choose Redeemr?</h2>
+            <p className="text-sm sm:text-base text-[#78716C] max-w-2xl mx-auto" style={{ lineHeight: 1.7 }}>
               The smarter way to reward loyal customers
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[
               { Icon: Trophy, title: "Earn With Every Visit", body: "Collect stamps each time you visit and unlock rewards when your card is full." },
               { Icon: CreditCard, title: "Digital Stamp Cards", body: "No more lost paper cards — your stamps live on your phone, always with you." },
@@ -146,15 +146,15 @@ export const LandingPage = () => {
       </section>
 
       {/* Coming Soon / Launching Section */}
-      <section className="py-24 bg-[#FAFAF7]">
+      <section className="py-16 lg:py-24 bg-[#FAFAF7]">
         <div className="container">
-          <div className="text-center mb-12">
-            <span className="eyebrow mb-6">
+          <div className="text-center mb-10 lg:mb-12">
+            <span className="eyebrow mb-4 lg:mb-6">
               <Rocket className="h-3 w-3" />
               Launching Soon
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold mt-6 mb-4 text-[#1C1917]">Restaurants Are Joining</h2>
-            <p className="text-[#78716C] max-w-2xl mx-auto" style={{ lineHeight: 1.7 }}>
+            <h2 className="text-2xl sm:text-4xl font-bold mt-4 lg:mt-6 mb-3 lg:mb-4 text-[#1C1917]">Restaurants Are Joining</h2>
+            <p className="text-sm sm:text-base text-[#78716C] max-w-2xl mx-auto" style={{ lineHeight: 1.7 }}>
               We're onboarding the best local restaurants in your area. Be the first to know when your favourites go live.
             </p>
           </div>
