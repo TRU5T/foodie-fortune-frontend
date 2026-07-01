@@ -182,12 +182,12 @@ export const LandingPage = () => {
       </section>
 
       {/* For Business Owners Section */}
-      <section className="py-24 bg-white">
+      <section className="py-16 lg:py-24 bg-white">
         <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
             <div>
-              <div className="h-[3px] w-12 rounded-full bg-[#F97316] mb-6" />
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-[#1C1917]">Own a Restaurant?</h2>
+              <div className="h-[3px] w-12 rounded-full bg-[#F97316] mb-4 lg:mb-6" />
+              <h2 className="text-2xl sm:text-4xl font-bold mb-3 lg:mb-4 text-[#1C1917]">Own a Restaurant?</h2>
               <p className="text-[#44403C] mb-6" style={{ lineHeight: 1.7 }}>
                 Redeemr gives you a digital loyalty programme your customers will actually use. No apps to download, no plastic cards — just a simple QR scan.
               </p>
