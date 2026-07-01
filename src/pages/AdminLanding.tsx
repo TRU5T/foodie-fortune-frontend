@@ -41,7 +41,7 @@ const AdminLanding = () => {
   if (role !== "admin") return <Navigate to="/" replace />;
 
   const quickLinks = [
-    { title: "User Management", description: "View and manage all registered users", icon: Users, href: "/admin/dashboard", color: "text-blue-500", bg: "bg-blue-500/10" },
+    { title: "User Management", description: "View and manage all registered users", icon: Users, href: "/admin/dashboard", color: "text-[#F97316]", bg: "bg-[#F97316]/10" },
     { title: "Vendor Management", description: "Oversee restaurants and vendor tiers", icon: Store, href: "/admin/dashboard", color: "text-emerald-500", bg: "bg-emerald-500/10" },
     { title: "Tier Requests", description: "Review pending upgrade requests", icon: ArrowUpCircle, href: "/admin/dashboard", color: "text-amber-500", bg: "bg-amber-500/10", badge: stats?.pendingUpgrades },
     { title: "Analytics", description: "Platform performance and metrics", icon: BarChart3, href: "/admin/dashboard", color: "text-purple-500", bg: "bg-purple-500/10" },
