@@ -158,7 +158,7 @@ export const LandingPage = () => {
               We're onboarding the best local restaurants in your area. Be the first to know when your favourites go live.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10 lg:mb-12">
             {[
               { Icon: Store, title: "Local Favourites", body: "Your go-to cafés, restaurants, and takeaways — all with loyalty built in." },
               { Icon: QrCode, title: "Scan & Stamp", body: "One scan per visit. Watch your stamps stack up and rewards unlock." },
