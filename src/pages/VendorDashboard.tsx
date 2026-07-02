@@ -269,6 +269,11 @@ const VendorDashboard = () => {
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
       />
+      <VendorOnboardingWizard
+        restaurantId={activeRestaurant.id}
+        open={isWizardOpen}
+        onOpenChange={setIsWizardOpen}
+      />
     </div>
   );
 };
