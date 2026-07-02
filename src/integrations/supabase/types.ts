@@ -257,6 +257,7 @@ export type Database = {
           id: string
           loyalty_level: string
           phone: string | null
+          referral_code: string | null
           total_points: number
           updated_at: string
         }
@@ -268,6 +269,7 @@ export type Database = {
           id: string
           loyalty_level?: string
           phone?: string | null
+          referral_code?: string | null
           total_points?: number
           updated_at?: string
         }
@@ -279,6 +281,7 @@ export type Database = {
           id?: string
           loyalty_level?: string
           phone?: string | null
+          referral_code?: string | null
           total_points?: number
           updated_at?: string
         }
@@ -340,6 +343,51 @@ export type Database = {
             columns: ["restaurant_id"]
             isOneToOne: false
             referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referrals: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          referred_email: string | null
+          referred_user_id: string | null
+          referrer_id: string
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          referred_email?: string | null
+          referred_user_id?: string | null
+          referrer_id: string
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          referred_email?: string | null
+          referred_user_id?: string | null
+          referrer_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_referred_user_id_fkey"
+            columns: ["referred_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -744,6 +792,7 @@ export type Database = {
         }
         Returns: Json
       }
+      generate_referral_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
