@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { User, Menu, Stamp, QrCode, Home, Award, Star } from "lucide-react";
+import { User, Menu, Stamp, QrCode, Home, Award, Star, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -24,6 +24,7 @@ const CustomerNavbar = () => {
           { to: "/rewards", label: "Rewards", icon: Award },
           { to: "/my-stamp-cards", label: "Stamp Cards", icon: Stamp },
           { to: "/my-qr-code", label: "QR Code", icon: QrCode },
+          { to: "/refer", label: "Invite", icon: Gift },
         ]
       : []),
   ];
