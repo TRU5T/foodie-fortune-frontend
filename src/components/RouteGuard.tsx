@@ -18,7 +18,7 @@ const Loading = () => (
 );
 
 export const RouteGuard = ({ allow, children }: RouteGuardProps) => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { availableRoles, isLoading } = useUserRole();
 
   if (authLoading || (user && isLoading)) return <Loading />;
