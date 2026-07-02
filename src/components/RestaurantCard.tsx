@@ -56,22 +56,32 @@ export const RestaurantCard = ({
       </div>
       <CardContent className="p-4">
         <h3 className="text-lg font-semibold">{name}</h3>
-        <p className="text-sm text-muted-foreground">{cuisine}</p>
-        <div className="flex items-center gap-2 mt-2">
-          <div className="flex items-center">
-            <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-            <span className="text-sm ml-1">{rating}</span>
+        {cuisine && <p className="text-sm text-muted-foreground">{cuisine}</p>}
+        {(rating > 0 || deliveryTime) && (
+          <div className="flex items-center gap-2 mt-2">
+            {rating > 0 && (
+              <div className="flex items-center">
+                <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                <span className="text-sm ml-1">{rating}</span>
+              </div>
+            )}
+            {rating > 0 && deliveryTime && (
+              <div className="w-1 h-1 rounded-full bg-muted-foreground" />
+            )}
+            {deliveryTime && (
+              <div className="flex items-center">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm ml-1">{deliveryTime}</span>
+              </div>
+            )}
           </div>
-          <div className="w-1 h-1 rounded-full bg-muted-foreground" />
-          <div className="flex items-center">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm ml-1">{deliveryTime}</span>
-          </div>
-        </div>
+        )}
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button asChild className="w-full">
-          <Link to={`/restaurant/${id}`}>Order Now</Link>
+          <Link to={`/restaurant/${id}`}>
+            {offersOnlineOrdering ? "View Menu" : "View Details"}
+          </Link>
         </Button>
       </CardFooter>
     </Card>
