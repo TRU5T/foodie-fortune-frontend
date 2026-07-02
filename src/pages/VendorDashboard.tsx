@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Store, ArrowUpCircle, ScanLine } from "lucide-react";
+import { Plus, Store, ArrowUpCircle, ScanLine, Printer, Sparkles } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useVendorRewards } from "@/hooks/useVendorRewards";
 import { RewardManagement } from "@/components/vendor/RewardManagement";
 import { CreateRewardDialog } from "@/components/vendor/CreateRewardDialog";
+import { VendorOnboardingWizard } from "@/components/vendor/VendorOnboardingWizard";
 import { MenuItemManagement } from "@/components/vendor/MenuItemManagement";
 import { PromotionManagement } from "@/components/vendor/PromotionManagement";
 import { VendorAnalytics } from "@/components/vendor/VendorAnalytics";
@@ -22,14 +23,26 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const VendorDashboard = () => {
   const { user } = useAuth();
-  const { restaurants, isLoadingRestaurants } = useVendorRewards();
+  const { restaurants, isLoadingRestaurants, rewards } = useVendorRewards(undefined);
   const [selectedRestaurant, setSelectedRestaurant] = useState<string | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("rewards");
   const queryClient = useQueryClient();
 
   const activeRestaurantId = selectedRestaurant || restaurants?.[0]?.id;
   const { subscription, isActive: hasActiveSubscription } = useVendorSubscription(activeRestaurantId);
+  const { rewards: activeRewards, isLoadingRewards } = useVendorRewards(activeRestaurantId);
+
+  // Auto-open wizard the first time a vendor lands with no rewards.
+  useEffect(() => {
+    if (!activeRestaurantId || isLoadingRewards) return;
+    const seenKey = `redeemr:onboarded:${activeRestaurantId}`;
+    if ((activeRewards?.length ?? 0) === 0 && !sessionStorage.getItem(seenKey)) {
+      setIsWizardOpen(true);
+      sessionStorage.setItem(seenKey, "1");
+    }
+  }, [activeRestaurantId, activeRewards, isLoadingRewards]);
 
   const toggleOnlineOrdering = useMutation({
     mutationFn: async ({ restaurantId, enabled }: { restaurantId: string; enabled: boolean }) => {
@@ -96,6 +109,14 @@ const VendorDashboard = () => {
           <p className="text-muted-foreground">Manage your store & rewards</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <Button variant="outline" onClick={() => setIsWizardOpen(true)}>
+            <Sparkles className="h-4 w-4 mr-2" />Setup Wizard
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to={`/vendor-poster/${activeRestaurant.id}`}>
+              <Printer className="h-4 w-4 mr-2" />QR Poster
+            </Link>
+          </Button>
           <Button asChild>
             <Link to="/vendor-scanner">
               <ScanLine className="h-4 w-4 mr-2" />Scan Customer
@@ -247,6 +268,11 @@ const VendorDashboard = () => {
         loyaltyType={activeRestaurant.loyalty_type}
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
+      />
+      <VendorOnboardingWizard
+        restaurantId={activeRestaurant.id}
+        open={isWizardOpen}
+        onOpenChange={setIsWizardOpen}
       />
     </div>
   );

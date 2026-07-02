@@ -12,6 +12,7 @@ type Profile = {
   avatar_url: string | null;
   total_points: number;
   loyalty_level: string;
+  referral_code: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -22,7 +23,7 @@ type AuthContextType = {
   session: Session | null;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  signUp: (email: string, password: string, fullName: string, referralCode?: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 };
@@ -83,12 +84,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     toast({ title: "Welcome back!", description: "You've been successfully signed in." });
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email: string, password: string, fullName: string, referralCode?: string) => {
+    const cleanedRef = referralCode?.trim().toUpperCase();
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName },
+        data: cleanedRef ? { full_name: fullName, referred_by: cleanedRef } : { full_name: fullName },
         emailRedirectTo: window.location.origin,
       },
     });
