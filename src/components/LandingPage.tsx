@@ -69,24 +69,19 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* Stat Bar */}
+      {/* Founding Restaurants Bar */}
       <section className="bg-white border-b border-[#E7E5E4]">
         <div className="container py-8 lg:py-10">
-          <div className="grid grid-cols-3 divide-x divide-[#E7E5E4]">
-            {[
-              { num: "12k", suffix: "+", label: "Customers" },
-              { num: "340", suffix: "+", label: "Restaurants" },
-              { num: "94", suffix: "%", label: "Return rate" },
-            ].map((s) => (
-              <div key={s.label} className="text-center px-2 sm:px-4">
-                <div className="text-2xl sm:text-4xl font-bold text-[#1C1917] tracking-tight">
-                  {s.num}<span className="text-[#F97316]">{s.suffix}</span>
-                </div>
-                <div className="text-[10px] sm:text-xs uppercase tracking-[0.08em] text-[#78716C] mt-2 font-medium whitespace-nowrap">
-                  {s.label}
-                </div>
-              </div>
-            ))}
+          <div className="text-center max-w-2xl mx-auto">
+            <div className="text-xs uppercase tracking-[0.12em] text-[#F97316] font-semibold mb-2">
+              Now onboarding
+            </div>
+            <p className="text-base sm:text-lg text-[#1C1917] font-medium" style={{ lineHeight: 1.6 }}>
+              Join our <span className="text-[#F97316]">founding restaurants</span> shaping the future of digital loyalty.
+            </p>
+            <p className="text-xs sm:text-sm text-[#78716C] mt-2">
+              Free for the first 3 months · No card required
+            </p>
           </div>
         </div>
       </section>

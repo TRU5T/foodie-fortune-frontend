@@ -145,19 +145,8 @@ const Restaurants = () => {
       <div className="container py-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Restaurants ({filteredRestaurants.length})</h2>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Sort by:</span>
-            <Select defaultValue="recommended">
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="recommended">Recommended</SelectItem>
-                <SelectItem value="points">Most Points</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
         </div>
+
         
         {isLoading ? (
           <div className="flex justify-center py-12">

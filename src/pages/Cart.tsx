@@ -18,16 +18,21 @@ const Cart = () => {
   const pointsEarned = Math.round(total * 10);
   
   const handleCheckout = () => {
-    setIsCheckingOut(true);
-    setTimeout(() => {
-      clearCart();
-      setIsCheckingOut(false);
-    }, 2000);
+    // Ordering is not yet enabled — checkout is disabled.
   };
   
   return (
     <div className="container py-8">
-      <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
+      <h1 className="text-3xl font-bold mb-4">Your Cart</h1>
+      <div className="mb-8 rounded-lg border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
+        <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+        <div>
+          <p className="text-sm font-medium">Online ordering is coming soon</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            For now, visit participating restaurants in person and scan your Redeemr QR code to collect loyalty.
+          </p>
+        </div>
+      </div>
       
       {items.length === 0 ? (
         <div className="text-center py-12">
@@ -89,13 +94,13 @@ const Cart = () => {
                   </div>
                   <div className="bg-muted p-4 rounded-lg flex items-start gap-2">
                     <AlertCircle className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-muted-foreground">This is a demo. No actual payment will be processed.</p>
+                    <p className="text-sm text-muted-foreground">Ordering isn't live yet. Checkout is disabled.</p>
                   </div>
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="w-full" onClick={handleCheckout} disabled={isCheckingOut}>
-                  {isCheckingOut ? "Processing..." : "Checkout"}
+                <Button className="w-full" onClick={handleCheckout} disabled>
+                  Coming Soon
                 </Button>
               </CardFooter>
             </Card>
