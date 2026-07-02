@@ -36,9 +36,11 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Unsubscribe from "./pages/Unsubscribe";
 import BlogPaperVsDigital from "./pages/BlogPaperVsDigital";
+import Refer from "./pages/Refer";
 import { RouteGuard } from "@/components/RouteGuard";
 const MyQRCode = lazy(() => import("./pages/MyQRCode"));
 const VendorScanner = lazy(() => import("./pages/VendorScanner"));
+const VendorPoster = lazy(() => import("./pages/VendorPoster"));
 
 const queryClient = new QueryClient();
 
@@ -78,12 +80,14 @@ const App = () => (
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/blog/paper-vs-digital-loyalty" element={<BlogPaperVsDigital />} />
+                <Route path="/refer" element={<Refer />} />
               </Route>
 
               {/* Vendor layout routes */}
               <Route element={<RouteGuard allow={["vendor", "admin"]}><VendorLayout /></RouteGuard>}>
                 <Route path="/vendor-dashboard" element={<VendorDashboard />} />
                 <Route path="/vendor-scanner" element={<Suspense fallback={<SuspenseFallback />}><VendorScanner /></Suspense>} />
+                <Route path="/vendor-poster/:restaurantId" element={<Suspense fallback={<SuspenseFallback />}><VendorPoster /></Suspense>} />
               </Route>
 
               {/* Admin layout routes */}

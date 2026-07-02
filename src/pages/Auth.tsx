@@ -29,6 +29,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get("tab") === "register" ? "register" : "login";
+  const refCode = searchParams.get("ref")?.trim().toUpperCase() || "";
   const [activeTab, setActiveTab] = useState<"login" | "register">(defaultTab);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ const Auth = () => {
 
   const onRegisterSubmit = async (data: RegisterFormValues) => {
     try {
-      await signUp(data.email, data.password, data.fullName);
+      await signUp(data.email, data.password, data.fullName, refCode || undefined);
       navigate("/");
     } catch (error) {
       console.error("Register error:", error);
@@ -111,7 +112,11 @@ const Auth = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Create an account</CardTitle>
-                <CardDescription>Enter your details to create a new account.</CardDescription>
+                <CardDescription>
+                  {refCode
+                    ? `You're joining with invite code ${refCode}. You'll both earn a bonus stamp on your first visit.`
+                    : "Enter your details to create a new account."}
+                </CardDescription>
               </CardHeader>
               <Form {...registerForm}>
                 <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)}>
