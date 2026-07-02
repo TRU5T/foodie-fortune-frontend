@@ -109,6 +109,14 @@ const VendorDashboard = () => {
           <p className="text-muted-foreground">Manage your store & rewards</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <Button variant="outline" onClick={() => setIsWizardOpen(true)}>
+            <Sparkles className="h-4 w-4 mr-2" />Setup Wizard
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to={`/vendor-poster/${activeRestaurant.id}`}>
+              <Printer className="h-4 w-4 mr-2" />QR Poster
+            </Link>
+          </Button>
           <Button asChild>
             <Link to="/vendor-scanner">
               <ScanLine className="h-4 w-4 mr-2" />Scan Customer
