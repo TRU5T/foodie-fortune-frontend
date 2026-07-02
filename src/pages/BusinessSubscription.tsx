@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { BusinessPlanCard } from "@/components/BusinessPlanCard";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -50,8 +51,10 @@ const BusinessSubscription = () => {
                 <ShoppingBag className="h-5 w-5" />
                 {isActive ? "Already Subscribed" : subscribe.isPending ? "Activating..." : "Start Free Trial"}
               </Button>
-              <Button size="lg" variant="outline" className="gap-2">
-                <Users className="h-5 w-5" />Book a Demo
+              <Button asChild size="lg" variant="outline" className="gap-2">
+                <Link to="/contact?topic=demo">
+                  <Users className="h-5 w-5" />Book a Demo
+                </Link>
               </Button>
             </div>
           </div>

@@ -1,113 +1,79 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { FoodItemCard } from "@/components/FoodItemCard";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Star, Clock, MapPin, Info, Award, ArrowLeft } from "lucide-react";
-import { useCart } from "@/context/CartContext";
-
-const MOCK_RESTAURANT_DATA = {
-  "1": {
-    id: "1",
-    name: "Burger King",
-    image: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1965&auto=format&fit=crop",
-    cuisine: "American, Burgers",
-    rating: 4.5,
-    deliveryTime: "15-25 min",
-    pointsPerDollar: 2,
-    description: "Home of the Whopper and more. Flame-grilled burgers, crispy fries, and refreshing beverages.",
-    address: "123 Main St, Anytown, USA",
-    menuCategories: [
-      { id: "burgers", name: "Burgers" },
-      { id: "sides", name: "Sides" },
-      { id: "drinks", name: "Drinks" },
-    ],
-    menuItems: [
-      { id: "item1", name: "Classic Whopper", description: "Flame-grilled beef topped with juicy tomatoes, fresh lettuce, creamy mayonnaise, ketchup, crunchy pickles, and sliced white onions on a soft sesame seed bun.", price: 7.99, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=2304&auto=format&fit=crop", category: "burgers", isPopular: true },
-      { id: "item2", name: "Cheeseburger", description: "Flame-grilled beef patty topped with melted American cheese, pickles, mustard, and ketchup.", price: 5.99, image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=2308&auto=format&fit=crop", category: "burgers" },
-      { id: "item3", name: "Bacon King", description: "Two savory flame-grilled beef patties topped with thick-cut smoked bacon and melted American cheese.", price: 8.99, image: "https://images.unsplash.com/photo-1599115939018-a1427cc2bb16?q=80&w=2340&auto=format&fit=crop", category: "burgers", isPopular: true },
-      { id: "item4", name: "Chicken Fries", description: "White meat chicken coated in a light crispy breading seasoned with savory spices.", price: 4.99, image: "https://images.unsplash.com/photo-1619881590738-a127cd4d4044?q=80&w=2433&auto=format&fit=crop", category: "sides" },
-      { id: "item5", name: "French Fries", description: "Golden, crispy, and piping hot French fries.", price: 3.49, image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=2374&auto=format&fit=crop", category: "sides", isPopular: true },
-      { id: "item6", name: "Soft Drink", description: "Your choice of refreshing soft drink.", price: 2.49, image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=2340&auto=format&fit=crop", category: "drinks" },
-    ],
-  },
-};
+import { Card, CardContent } from "@/components/ui/card";
+import { MapPin, Info, Award, ArrowLeft, Loader2, UtensilsCrossed } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useRestaurant } from "@/hooks/useRestaurants";
 
 const RestaurantDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const { addItem } = useCart();
-  const [activeCategory, setActiveCategory] = useState<string>("");
-  
-  const restaurant = MOCK_RESTAURANT_DATA[id as keyof typeof MOCK_RESTAURANT_DATA];
-  
-  useEffect(() => {
-    if (restaurant?.menuCategories.length > 0) {
-      setActiveCategory(restaurant.menuCategories[0].id);
-    }
-  }, [restaurant]);
-  
+  const { data: restaurant, isLoading } = useRestaurant(id || "");
+
+  const { data: menuItems } = useQuery({
+    queryKey: ["menu_items", id],
+    enabled: !!restaurant?.id && restaurant?.offers_online_ordering,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("menu_items")
+        .select("*")
+        .eq("restaurant_id", restaurant!.id)
+        .eq("is_available", true);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="container py-16 flex justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   if (!restaurant) {
     return (
       <div className="container py-8">
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-4">Restaurant Not Found</h2>
-          <p className="text-muted-foreground mb-6">The restaurant you're looking for doesn't exist.</p>
-          <Button asChild><Link to="/restaurants">Back to Restaurants</Link></Button>
+          <p className="text-muted-foreground mb-6">
+            The restaurant you're looking for doesn't exist.
+          </p>
+          <Button asChild>
+            <Link to="/restaurants">Back to Restaurants</Link>
+          </Button>
         </div>
       </div>
     );
   }
-  
-  const handleAddToCart = (itemId: string) => {
-    const item = restaurant.menuItems.find(item => item.id === itemId);
-    if (item) {
-      addItem({ id: item.id, name: item.name, price: item.price, image: item.image });
-    }
-  };
 
+  const cover =
+    restaurant.cover_image_url ||
+    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2340&auto=format&fit=crop";
   const canonical = `https://redeemr.app/restaurant/${restaurant.id}`;
-  const restaurantJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Restaurant",
-    name: restaurant.name,
-    image: restaurant.image,
-    description: restaurant.description,
-    address: restaurant.address,
-    servesCuisine: restaurant.cuisine,
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: restaurant.rating,
-      reviewCount: 1,
-    },
-    url: canonical,
-  };
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://redeemr.app/" },
-      { "@type": "ListItem", position: 2, name: "Restaurants", item: "https://redeemr.app/restaurants" },
-      { "@type": "ListItem", position: 3, name: restaurant.name, item: canonical },
-    ],
-  };
+  const loyaltyLabel =
+    restaurant.loyalty_type === "stamps"
+      ? `Collect stamps — ${restaurant.stamps_required} for a reward`
+      : `Earn ${restaurant.points_per_dollar}x points per $`;
 
   return (
     <>
       <Helmet>
         <title>{`${restaurant.name} — Loyalty & Rewards on Redeemr`}</title>
-        <meta name="description" content={`${restaurant.description} Earn ${restaurant.pointsPerDollar}x points on every order at ${restaurant.name}.`} />
+        <meta
+          name="description"
+          content={`${restaurant.description ?? restaurant.name} — earn loyalty rewards on Redeemr.`}
+        />
         <link rel="canonical" href={canonical} />
         <meta property="og:title" content={`${restaurant.name} on Redeemr`} />
-        <meta property="og:description" content={restaurant.description} />
         <meta property="og:url" content={canonical} />
-        <meta property="og:image" content={restaurant.image} />
+        <meta property="og:image" content={cover} />
         <meta property="og:type" content="restaurant" />
-        <script type="application/ld+json">{JSON.stringify(restaurantJsonLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
       </Helmet>
-      {/* Back button */}
+
       <div className="container pt-4">
         <Button variant="ghost" size="sm" asChild>
           <Link to="/restaurants" className="gap-1">
@@ -116,59 +82,101 @@ const RestaurantDetails = () => {
         </Button>
       </div>
 
-      {/* Restaurant Header */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10" />
-        <div className="relative h-[300px] bg-cover bg-center" style={{ backgroundImage: `url(${restaurant.image})` }} />
+        <div
+          className="relative h-[300px] bg-cover bg-center"
+          style={{ backgroundImage: `url(${cover})` }}
+        />
         <div className="container absolute bottom-0 z-20 text-white pb-6">
           <div className="flex flex-col md:flex-row md:items-end gap-4 justify-between">
             <div>
               <h1 className="text-3xl font-bold">{restaurant.name}</h1>
-              <p className="text-sm opacity-90 mb-2">{restaurant.cuisine}</p>
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-1"><Star className="h-4 w-4 text-yellow-500 fill-yellow-500" /><span className="text-sm">{restaurant.rating}</span></div>
-                <div className="w-1 h-1 rounded-full bg-white/50" />
-                <div className="flex items-center gap-1"><Clock className="h-4 w-4" /><span className="text-sm">{restaurant.deliveryTime}</span></div>
-                <div className="w-1 h-1 rounded-full bg-white/50" />
-                <div className="flex items-center gap-1"><MapPin className="h-4 w-4" /><span className="text-sm">1.2 miles away</span></div>
-              </div>
+              {restaurant.cuisine && (
+                <p className="text-sm opacity-90 mb-2">{restaurant.cuisine}</p>
+              )}
+              {(restaurant.address || restaurant.city) && (
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  <span className="text-sm">
+                    {[restaurant.address, restaurant.city].filter(Boolean).join(", ")}
+                  </span>
+                </div>
+              )}
             </div>
-            <Badge className="bg-primary text-primary-foreground px-3 py-1.5 text-base">{restaurant.pointsPerDollar}x Points</Badge>
+            <Badge className="bg-primary text-primary-foreground px-3 py-1.5 text-base">
+              {loyaltyLabel}
+            </Badge>
           </div>
         </div>
       </div>
-      
-      {/* Restaurant Info */}
+
       <div className="border-b">
         <div className="container py-4">
           <div className="flex flex-wrap items-center gap-6">
-            <div className="flex items-center gap-2"><Info className="h-4 w-4 text-muted-foreground" /><span className="text-sm">{restaurant.description}</span></div>
-            <div className="flex items-center gap-2"><Award className="h-4 w-4 text-primary" /><span className="text-sm font-medium">Earn {restaurant.pointsPerDollar}x points on all orders</span></div>
+            {restaurant.description && (
+              <div className="flex items-center gap-2">
+                <Info className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm">{restaurant.description}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <Award className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">{loyaltyLabel}</span>
+            </div>
           </div>
         </div>
       </div>
-      
-      {/* Menu */}
+
       <div className="container py-8">
-        <h2 className="text-2xl font-bold mb-6">Menu</h2>
-        <Tabs defaultValue={activeCategory} onValueChange={setActiveCategory} className="w-full">
-          <TabsList className="mb-6 w-full justify-start overflow-x-auto">
-            {restaurant.menuCategories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id}>{category.name}</TabsTrigger>
-            ))}
-          </TabsList>
-          {restaurant.menuCategories.map((category) => (
-            <TabsContent key={category.id} value={category.id} className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {restaurant.menuItems
-                  .filter(item => item.category === category.id)
-                  .map((item) => (
-                    <FoodItemCard key={item.id} id={item.id} name={item.name} image={item.image} description={item.description} price={item.price} isPopular={item.isPopular} onAddToCart={handleAddToCart} />
-                  ))}
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+        {restaurant.offers_online_ordering && menuItems && menuItems.length > 0 ? (
+          <>
+            <h2 className="text-2xl font-bold mb-6">Menu</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {menuItems.map((item) => (
+                <Card key={item.id}>
+                  {item.image_url && (
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className="w-full h-36 object-cover rounded-t-xl"
+                    />
+                  )}
+                  <CardContent className="p-4">
+                    <h3 className="text-base font-semibold">{item.name}</h3>
+                    {item.description && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                        {item.description}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between mt-3">
+                      <p className="text-sm font-medium">
+                        ${Number(item.price).toFixed(2)}
+                      </p>
+                      <Badge variant="secondary" className="text-[10px]">
+                        Ordering coming soon
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </>
+        ) : (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <UtensilsCrossed className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+              <h3 className="font-semibold mb-1">Visit in person to earn rewards</h3>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                {restaurant.name} isn't taking online orders yet. Show your Redeemr QR
+                code at the till on your next visit to collect loyalty.
+              </p>
+              <Button asChild className="mt-4" size="sm">
+                <Link to="/my-qr-code">Show My QR Code</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </>
   );
