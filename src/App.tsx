@@ -36,6 +36,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Unsubscribe from "./pages/Unsubscribe";
 import BlogPaperVsDigital from "./pages/BlogPaperVsDigital";
+import { RouteGuard } from "@/components/RouteGuard";
 const MyQRCode = lazy(() => import("./pages/MyQRCode"));
 const VendorScanner = lazy(() => import("./pages/VendorScanner"));
 
@@ -80,13 +81,13 @@ const App = () => (
               </Route>
 
               {/* Vendor layout routes */}
-              <Route element={<VendorLayout />}>
+              <Route element={<RouteGuard allow={["vendor", "admin"]}><VendorLayout /></RouteGuard>}>
                 <Route path="/vendor-dashboard" element={<VendorDashboard />} />
                 <Route path="/vendor-scanner" element={<Suspense fallback={<SuspenseFallback />}><VendorScanner /></Suspense>} />
               </Route>
 
               {/* Admin layout routes */}
-              <Route element={<AdminLayout />}>
+              <Route element={<RouteGuard allow={["admin"]}><AdminLayout /></RouteGuard>}>
                 <Route path="/admin" element={<AdminLanding />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
               </Route>
